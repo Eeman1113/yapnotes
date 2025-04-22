@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yap App - Voice Transcription</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS Variables --- */
+        :root {
+            --background-start: #0f172a; 
+            --background-end: #020617;
+            --glass-bg: rgba(30, 41, 59, 0.4); 
+            --glass-bg-modal: rgba(30, 41, 59, 0.9);
+            --glass-border: rgba(51, 65, 85, 0.5);
+            --text-color: #f1f5f9; 
+            --text-muted: #94a3b8;
+            --accent-color: #3b82f6; 
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --accent-color-recording: #ef4444; 
+            --accent-glow-recording: rgba(239, 68, 68, 0.6);
+            --icon-color-on-accent: #ffffff;
+            --sans-font: 'Inter', sans-serif; 
+            --serif-font: 'EB Garamond', serif;
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.5s ease;
+        }
+
+        /* --- Global Styles --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 16px; }
+        body { 
+            min-height: 100vh; 
+            font-family: var(--sans-font); 
+            background: linear-gradient(135deg, var(--background-start) 0%, var(--background-end) 100%) fixed; 
+            color: var(--text-color); 
+            overscroll-behavior: none; 
+            display: flex; 
+            flex-direction: column; 
+            line-height: 1.6; 
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* --- Background Animation Elements --- */
+        .bg-animation-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .bg-bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--accent-color);
+            opacity: 0.05;
+            filter: blur(40px);
+            transition: transform var(--transition-slow);
+        }
+
+        /* --- Main Content Area --- */
+        .main-content { 
+            flex-grow: 1; 
+            padding: 50px 24px 40px 24px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            width: 100%; 
+            max-width: 550px; 
+            margin: 0 auto; 
+            text-align: center; 
+            position: relative; 
+            z-index: 1; 
+        }
+
+        /* --- Date & Time Section --- */
+        .date-time-info { 
+            margin-bottom: 45px; 
+            width: 100%; 
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: fadeInDown 0.6s forwards;
+        }
+        
+        .date-time-info .date { 
+            font-family: var(--serif-font); 
+            font-size: 2.5rem; 
+            font-weight: 500; 
+            margin-bottom: 6px; 
+            color: var(--text-color); 
+            letter-spacing: 0.01em; 
+            animation: pulse 4s infinite ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .date-time-info .day { 
+            font-family: var(--sans-font); 
+            font-size: 0.8rem; 
+            color: var(--text-muted); 
+            text-transform: uppercase; 
+            letter-spacing: 0.15em; 
+            margin-bottom: 20px; 
+            font-weight: 500; 
+        }
+        
+        .date-time-info .time-badge { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            background-color: var(--glass-bg); 
+            color: var(--text-muted); 
+            padding: 9px 22px; 
+            border-radius: 9999px; 
+            font-size: 0.85rem; 
+            font-weight: 500; 
+            border: 1px solid var(--glass-border); 
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px); 
+            font-family: var(--sans-font);
+            transition: transform var(--transition-normal), background-color var(--transition-normal);
+        }
+        
+        .time-badge:hover {
+            transform: scale(1.03);
+            background-color: rgba(51, 65, 85, 0.5);
+        }
+
+        /* --- Record Button --- */
+        .record-button-container { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            margin-bottom: 35px; 
+            width: 100%; 
+            opacity: 0;
+            transform: scale(0.9);
+            animation: fadeInScale 0.5s 0.2s forwards;
+        }
+        
+        .record-button { 
+            background-color: var(--accent-color); 
+            color: var(--icon-color-on-accent); 
+            width: 80px; 
+            height: 80px; 
+            border-radius: 50%; 
+            box-shadow: 0 0 15px 3px var(--accent-glow), 0 4px 10px rgba(0,0,0, 0.3); 
+            transition: background-color var(--transition-normal), transform var(--transition-normal), box-shadow var(--transition-normal); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border: none; 
+            cursor: pointer; 
+            outline: none; 
+            margin-bottom: 20px; 
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .record-button svg, .record-button .stop-icon { 
+            width: 32px; 
+            height: 32px;
+            transition: transform var(--transition-normal), opacity var(--transition-normal);
+        }
+        
+        .record-button .stop-icon {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background-color: white;
+            border-radius: 3px;
+            opacity: 0;
+            transform: scale(0);
+        }
+        
+        .record-button:hover:not(:disabled) { 
+            transform: scale(1.05); 
+            box-shadow: 0 0 25px 5px var(--accent-glow), 0 6px 15px rgba(0,0,0, 0.35); 
+        }
+        
+        .record-button:focus-visible:not(:disabled) { 
+            outline: 3px solid var(--accent-glow); 
+            outline-offset: 3px; 
+        }
+        
+        .record-button:active:not(:disabled) { 
+            transform: scale(0.98); 
+            box-shadow: 0 0 10px 2px var(--accent-glow), 0 2px 5px rgba(0,0,0, 0.3); 
+        }
+        
+        .record-button:disabled { 
+            opacity: 0.6; 
+            cursor: not-allowed; 
+            box-shadow: none; 
+            animation: none !important; 
+        }
+        
+        .record-button.recording { 
+            background-color: var(--accent-color-recording); 
+            animation: pulse-glow-recording 1.5s infinite ease-in-out; 
+            transform: scale(1.03); 
+        }
+        
+        .record-button.recording .mic-icon {
+            opacity: 0;
+            transform: scale(0);
+        }
+        
+        .record-button.recording .stop-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .record-button.recording:hover:not(:disabled) { 
+            box-shadow: 0 0 28px 7px var(--accent-glow-recording), 0 6px 15px rgba(0,0,0, 0.35); 
+        }
+        
+        .record-button.recording:focus-visible:not(:disabled) { 
+            outline: 3px solid var(--accent-glow-recording); 
+        }
+        
+        @keyframes pulse-glow-recording { 
+            0%, 100% { 
+                box-shadow: 0 0 15px 3px var(--accent-glow-recording), 0 4px 10px rgba(0,0,0, 0.3); 
+            }
+            50% { 
+                box-shadow: 0 0 25px 5px var(--accent-glow-recording), 0 6px 15px rgba(0,0,0, 0.35); 
+            }
+        }
+
+        /* --- Audio Visualizer --- */
+        .audio-visualizer {
+            width: 100%;
+            max-width: 250px;
+            height: 50px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 2px;
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+            margin: 0 auto;
+        }
+        
+        .audio-visualizer.visible {
+            opacity: 1;
+        }
+        
+        .visualizer-bar {
+            width: 3px;
+            background-color: var(--accent-color-recording);
+            height: 5px;
+            border-radius: 1px;
+            transition: height 0.1s ease-out, opacity 0.1s ease-out;
+        }
+
+        /* --- Transcription Display Area --- */
+        .transcription-container {
+            width: 100%;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s 0.4s forwards;
+        }
+        
+        .transcription-display { 
+            width: 100%; 
+            min-height: 180px;
+            max-height: 300px;
+            padding: 24px; 
+            background-color: var(--glass-bg); 
+            backdrop-filter: blur(8px); 
+            -webkit-backdrop-filter: blur(8px); 
+            border-radius: 16px; 
+            border: 1px solid var(--glass-border); 
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25); 
+            color: var(--text-color); 
+            font-family: var(--serif-font); 
+            font-size: 1.15rem; 
+            line-height: 1.8; 
+            text-align: left; 
+            margin-bottom: 10px; 
+            overflow-y: auto; 
+            transition: border-color var(--transition-normal), box-shadow var(--transition-normal); 
+        }
+        
+        .transcription-display:focus-within { 
+            border-color: rgba(255, 255, 255, 0.25); 
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3); 
+        }
+        
+        .transcription-display:empty::before { 
+            content: "Tap the mic to start yapping..."; 
+            color: var(--text-muted); 
+            font-style: italic; 
+            opacity: 0.8; 
+            font-family: var(--serif-font); 
+        }
+        
+        .transcription-display .entry { 
+            margin-bottom: 1em;
+            opacity: 0;
+            transform: translateX(-10px);
+            animation: fadeInLeft 0.3s forwards;
+        }
+        
+        .transcription-display .entry-time { 
+            color: var(--text-muted); 
+            font-family: var(--sans-font); 
+            font-size: 0.8em; 
+            font-weight: 500; 
+            margin-right: 0.75em; 
+            display: inline-block; 
+            vertical-align: baseline; 
+        }
+        
+        .transcription-display .entry-text {
+            font-family: var(--serif-font);
+        }
+
+        /* --- Live Transcript Area --- */
+        .live-transcript-area { 
+            width: 100%; 
+            min-height: 2em; 
+            padding: 12px 16px; 
+            margin-top: 10px; 
+            margin-bottom: 15px; 
+            color: var(--text-muted); 
+            font-family: var(--sans-font); 
+            font-size: 0.95rem; 
+            font-style: italic; 
+            text-align: left; 
+            opacity: 0; 
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: opacity var(--transition-normal), visibility 0s linear var(--transition-normal), transform var(--transition-normal); 
+            border-radius: 8px; 
+            background-color: rgba(15, 23, 42, 0.2);
+        }
+        
+        .live-transcript-area.visible { 
+            opacity: 1; 
+            visibility: visible;
+            transform: translateY(0);
+            transition: opacity var(--transition-normal), visibility 0s linear 0s, transform var(--transition-normal); 
+        }
+        
+        .live-transcript-area:empty::before { 
+            content: "Listening..."; 
+            color: var(--text-muted); 
+            opacity: 0.7; 
+        }
+
+        /* --- Word Count Display --- */
+        .word-count-display { 
+            font-family: var(--sans-font); 
+            font-size: 0.85rem; 
+            color: var(--text-muted); 
+            font-weight: 500; 
+            letter-spacing: 0.02em;
+            transition: color 0.5s ease, transform 0.5s ease;
+        }
+        
+        .word-count-display.highlight {
+            color: #bae6fd;
+            transform: scale(1.1);
+        }
+
+        /* --- Message Box --- */
+        .message-box { 
+            position: fixed; 
+            top: 25px; 
+            left: 50%; 
+            transform: translateX(-50%) translateY(-20px); 
+            background-color: var(--glass-bg-modal); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
+            border: 1px solid var(--glass-border); 
+            color: var(--text-color); 
+            padding: 12px 24px; 
+            border-radius: 10px; 
+            z-index: 1000; 
+            display: block;
+            font-size: 0.9rem; 
+            font-weight: 500; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.35); 
+            text-align: center; 
+            max-width: 90%; 
+            opacity: 0; 
+            visibility: hidden;
+            transition: opacity var(--transition-normal), transform var(--transition-normal), visibility 0s linear var(--transition-normal); 
+            font-family: var(--sans-font); 
+        }
+        
+        .message-box.show { 
+            opacity: 1; 
+            visibility: visible;
+            transform: translateX(-50%) translateY(0); 
+            transition: opacity var(--transition-normal), transform var(--transition-normal), visibility 0s linear 0s; 
+        }
+
+        /* --- Past Entries Button --- */
+        .past-entries-button { 
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; 
+            width: 48px; 
+            height: 48px; 
+            background-color: var(--glass-bg); 
+            border: 1px solid var(--glass-border); 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            color: var(--text-muted); 
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); 
+            backdrop-filter: blur(5px); 
+            -webkit-backdrop-filter: blur(5px); 
+            transition: all var(--transition-normal); 
+            z-index: 900; 
+            outline: none;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s 0.6s forwards;
+        }
+        
+        .past-entries-button:hover:not(:disabled) { 
+            background-color: rgba(51, 65, 85, 0.5); 
+            color: var(--text-color); 
+            transform: scale(1.1); 
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3); 
+        }
+        
+        .past-entries-button:focus-visible:not(:disabled) { 
+            outline: 2px solid var(--accent-glow); 
+            outline-offset: 2px; 
+        }
+        
+        .past-entries-button:disabled { 
+            opacity: 0.6; 
+            cursor: not-allowed; 
+            box-shadow: none; 
+        }
+
+        /* --- History Modal --- */
+        .modal-overlay { 
+            position: fixed; 
+            inset: 0; 
+            background-color: rgba(0, 0, 0, 0.6); 
+            backdrop-filter: blur(5px); 
+            -webkit-backdrop-filter: blur(5px); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 1100; 
+            opacity: 0; 
+            visibility: hidden; 
+            transition: opacity var(--transition-normal), visibility 0s linear var(--transition-normal); 
+        }
+        
+        .modal-overlay.visible { 
+            opacity: 1; 
+            visibility: visible; 
+            transition: opacity var(--transition-normal), visibility 0s linear 0s; 
+        }
+        
+        .modal-content { 
+            background-color: var(--glass-bg-modal); 
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px); 
+            border: 1px solid var(--glass-border); 
+            border-radius: 16px; 
+            padding: 25px 30px; 
+            width: 90%; 
+            max-width: 600px; 
+            max-height: 80vh; 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); 
+            transform: scale(0.95); 
+            transition: transform var(--transition-normal); 
+            font-family: var(--sans-font); 
+        }
+        
+        .modal-overlay.visible .modal-content { 
+            transform: scale(1); 
+        }
+        
+        .modal-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 20px; 
+            padding-bottom: 15px; 
+            border-bottom: 1px solid var(--glass-border); 
+        }
+        
+        .modal-title { 
+            font-size: 1.4rem; 
+            font-weight: 600; 
+        }
+        
+        .modal-close-button { 
+            background: none; 
+            border: none; 
+            color: var(--text-muted); 
+            font-size: 1.8rem; 
+            cursor: pointer; 
+            line-height: 1; 
+            padding: 5px; 
+            transition: color var(--transition-normal); 
+        }
+        
+        .modal-close-button:hover { 
+            color: var(--text-color); 
+        }
+        
+        .modal-body { 
+            overflow-y: auto; 
+            flex-grow: 1; 
+            text-align: left; 
+        }
+        
+        .history-entry { 
+            margin-bottom: 20px; 
+        }
+        
+        .history-entry-date { 
+            font-size: 1.1rem; 
+            font-weight: 600; 
+            color: var(--text-color); 
+            margin-bottom: 10px; 
+            padding-bottom: 5px; 
+            border-bottom: 1px solid var(--glass-border); 
+            display: block; 
+            font-family: var(--serif-font); 
+        }
+        
+        .history-entry-item { 
+            margin-bottom: 10px;
+            opacity: 0;
+            transform: translateX(-5px);
+            animation: fadeInLeft 0.3s forwards;
+        }
+        
+        .history-entry-time { 
+            color: var(--text-muted); 
+            font-family: var(--sans-font); 
+            font-size: 0.8em; 
+            font-weight: 500; 
+            margin-right: 0.75em; 
+            display: inline-block; 
+            vertical-align: baseline; 
+        }
+        
+        .history-entry-text { 
+            font-size: 1rem; 
+            line-height: 1.7; 
+            color: var(--text-color); 
+            opacity: 0.9; 
+            white-space: pre-wrap; 
+            font-family: var(--sans-font); 
+            display: inline; 
+        }
+        
+        .modal-body:empty::before { 
+            content: "No past entries found."; 
+            color: var(--text-muted); 
+            display: block; 
+            text-align: center; 
+            padding-top: 30px; 
+            font-style: italic; 
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.3);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.3);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(148, 163, 184, 0.5);
+        }
+        
+        /* --- Responsive Styles --- */
+        @media (max-width: 640px) {
+            .date-time-info .date {
+                font-size: 2rem;
+            }
+            
+            .record-button {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .transcription-display {
+                font-size: 1rem;
+                padding: 20px;
+            }
+            
+            .modal-content {
+                padding: 20px;
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation Elements -->
+    <div class="bg-animation-container" id="bg-animation-container"></div>
+
+    <div class="main-content">
+        <!-- Date & Time Section -->
+        <div class="date-time-info">
+            <div class="date" id="current-date">April 22, 2025</div>
+            <div class="day" id="current-day">Tuesday</div>
+            <div class="time-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span id="current-time">9:00 PM</span>
+            </div>
+        </div>
+
+        <!-- Record Button -->
+        <div class="record-button-container">
+            <button class="record-button" id="record-button" aria-label="Start Recording">
+                <svg class="mic-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                <div class="stop-icon"></div>
+            </button>
+            
+            <!-- Audio Visualizer -->
+            <div class="audio-visualizer" id="audio-visualizer"></div>
+        </div>
+
+        <!-- Transcription Display -->
+        <div class="transcription-container">
+            <div class="transcription-display" id="transcription-output"></div>
+            <div class="live-transcript-area" id="live-transcript-area"></div>
+            <div class="word-count-display" id="word-count">0 words</div>
+        </div>
+    </div>
+
+    <!-- Past Entries Button -->
+    <button class="past-entries-button" id="past-entries-btn" aria-label="View Past Entries">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    </button>
+
+    <!-- History Modal -->
+    <div class="modal-overlay" id="history-modal-overlay">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modal-title">Past Entries</h2>
+                <button class="modal-close-button" id="modal-close-btn" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body" id="history-modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Message Box -->
+    <div id="message-box" class="message-box"></div>
+
+    <script>
+        // --- Constants ---
+        const YAP_ENTRIES_KEY = 'yapEntries'; // Key for localStorage
+        const NUM_VISUALIZER_BARS = 32; // Number of bars in the visualizer
+        const NUM_BG_BUBBLES = 15; // Number of background bubbles
+
+        // --- DOM Elements ---
+        const currentDateEl = document.getElementById('current-date');
+        const currentDayEl = document.getElementById('current-day');
+        const currentTimeEl = document.getElementById('current-time');
+        const transcriptionOutput = document.getElementById('transcription-output');
+        const liveTranscriptArea = document.getElementById('live-transcript-area');
+        const recordButton = document.getElementById('record-button');
+        const wordCountEl = document.getElementById('word-count');
+        const messageBox = document.getElementById('message-box');
+        const pastEntriesBtn = document.getElementById('past-entries-btn');
+        const historyModalOverlay = document.getElementById('history-modal-overlay');
+        const historyModalBody = document.getElementById('history-modal-body');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const audioVisualizer = document.getElementById('audio-visualizer');
+        const bgAnimationContainer = document.getElementById('bg-animation-container');
+
+        // --- State Variables ---
+        let isRecording = false;
+        let recognition; // SpeechRecognition instance
+        let audioContext; 
+        let analyser; 
+        let microphoneStream = null; 
+        let dataArray; 
+        let bufferLength; 
+        let animationFrameId; // Audio variables
+        let currentRecognitionTranscript = ''; // Holds final transcript for the CURRENT session
+        let messageTimeoutId = null; // Timeout ID for message box
+        let visualizerBars = []; // Array to hold visualizer bar elements
+        let bgBubbles = []; // Array to hold background bubble elements
+
+        // --- Feature Support Checks ---
+        const supportsLocalStorage = typeof(Storage) !== "undefined";
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const supportsSpeechRecognition = !!SpeechRecognition;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const supportsWebAudio = !!AudioContext && !!navigator.mediaDevices && !!navigator.mediaDevices.getUserMedia;
+
+        // --- Date & Time Update ---
+        function updateDateTime() {
+            const now = new Date();
+            const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+            const dayOptions = { weekday: 'long' };
+            const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true };
+            currentDateEl.textContent = now.toLocaleDateString('en-US', dateOptions);
+            currentDayEl.textContent = now.toLocaleDateString('en-US', dayOptions);
+            currentTimeEl.textContent = now.toLocaleTimeString('en-US', timeOptions);
+        }
+
+        // --- Word Count Update ---
+        function updateWordCount() {
+            // Calculate words from saved entries displayed in transcriptionOutput
+            const entries = transcriptionOutput.querySelectorAll('.entry-text');
+            let totalText = '';
+            entries.forEach(entry => { totalText += entry.textContent + ' '; });
+            const text = totalText.trim();
+            const words = text.split(/[\s\n]+/).filter(word => word.length > 0);
+            const count = text === '' ? 0 : words.length;
+            wordCountEl.textContent = `${count} word${count !== 1 ? 's' : ''}`;
+            
+            // Add highlight animation if words were added
+            if (count > 0) {
+                wordCountEl.classList.add('highlight');
+                setTimeout(() => {
+                    wordCountEl.classList.remove('highlight');
+                }, 1000);
+            }
+        }
+
+        // --- Message Box Display ---
+        function showMessage(message, duration = 3000) {
+            messageBox.textContent = message;
+            messageBox.classList.add('show');
+
+            // Clear previous timeout if any
+            if (messageTimeoutId) clearTimeout(messageTimeoutId);
+
+            // Set timeout to hide the message
+            messageTimeoutId = setTimeout(() => {
+                messageBox.classList.remove('show');
+                messageTimeoutId = null;
+            }, duration);
+        }
+
+        // --- Local Storage Functions ---
+        function getStoredEntries() {
+            if (!supportsLocalStorage) return {};
+            try {
+                const stored = localStorage.getItem(YAP_ENTRIES_KEY);
+                const parsed = stored ? JSON.parse(stored) : {};
+                return (typeof parsed === 'object' && parsed !== null) ? parsed : {};
+            } catch (e) {
+                console.error("Error reading entries from localStorage:", e);
+                showMessage("Error loading past entries. Data might be corrupted.", 4000);
+                return {};
+            }
+        }
+
+        function saveEntry(text) {
+            if (!supportsLocalStorage) {
+                showMessage("Cannot save: Browser storage not supported.", 4000);
+                return null;
+            }
+            if (!text || text.trim().length === 0) {
+                console.log("Attempted to save empty entry. Skipping.");
+                return null;
+            }
+
+            const allEntries = getStoredEntries();
+            const today = new Date().toISOString().split('T')[0];
+            const now = new Date();
+            const currentTime = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+
+            const newEntry = {
+                timestamp: now.getTime(),
+                time: currentTime,
+                text: text.trim()
+            };
+
+            if (!Array.isArray(allEntries[today])) {
+                allEntries[today] = [];
+            }
+            allEntries[today].push(newEntry);
+
+            try {
+                localStorage.setItem(YAP_ENTRIES_KEY, JSON.stringify(allEntries));
+                console.log("Entry saved:", newEntry);
+                return newEntry;
+            } catch (e) {
+                console.error("Error saving entry to localStorage:", e);
+                if (e.name === 'QuotaExceededError') {
+                    showMessage("Storage full. Cannot save new entry.", 5000);
+                } else {
+                    showMessage("Error saving entry.", 5000);
+                }
+                return null;
+            }
+        }
+
+        // --- Display Functions ---
+        function formatEntryHTML(entry) {
+            const entryP = document.createElement('p');
+            entryP.className = 'entry';
+            const timeSpan = document.createElement('span');
+            timeSpan.className = 'entry-time';
+            timeSpan.textContent = `[${entry.time}]`;
+            const textSpan = document.createElement('span');
+            textSpan.className = 'entry-text';
+            textSpan.textContent = entry.text;
+            entryP.appendChild(timeSpan);
+            entryP.appendChild(textSpan);
+            
+            // Add animation delay based on position
+            const existingEntries = transcriptionOutput.querySelectorAll('.entry').length;
+            entryP.style.animationDelay = `${existingEntries * 0.05}s`;
+            
+            return entryP;
+        }
+
+        function loadTodaysEntries() {
+            if (!supportsLocalStorage) return;
+            const allEntries = getStoredEntries();
+            const today = new Date().toISOString().split('T')[0];
+            const todaysEntries = Array.isArray(allEntries[today]) ? allEntries[today] : [];
+
+            transcriptionOutput.innerHTML = '';
+
+            if (todaysEntries.length > 0) {
+                console.log(`Loading ${todaysEntries.length} entries for today.`);
+                todaysEntries.sort((a, b) => a.timestamp - b.timestamp);
+                todaysEntries.forEach((entry, index) => {
+                    if (entry && typeof entry.time === 'string' && typeof entry.text === 'string') {
+                        const entryEl = formatEntryHTML(entry);
+                        entryEl.style.animationDelay = `${index * 0.05}s`;
+                        transcriptionOutput.appendChild(entryEl);
+                    } else {
+                        console.warn("Skipping invalid entry structure:", entry);
+                    }
+                });
+            } else {
+                console.log("No entries found for today.");
+            }
+            
+            updateWordCount();
+            
+            // Scroll to bottom after loading
+            requestAnimationFrame(() => {
+                transcriptionOutput.scrollTop = transcriptionOutput.scrollHeight;
+            });
+        }
+
+        function appendEntryToDisplay(entry) {
+            if (!entry) return;
+            const entryEl = formatEntryHTML(entry);
+            transcriptionOutput.appendChild(entryEl);
+            updateWordCount();
+            
+            // Scroll to bottom
+            requestAnimationFrame(() => {
+                transcriptionOutput.scrollTop = transcriptionOutput.scrollHeight;
+            });
+            
+            showMessage("Entry added!", 2000);
+        }
+
+        // --- Modal Functions ---
+        function showHistoryModal() {
+            const allEntries = getStoredEntries();
+            const sortedDates = Object.keys(allEntries).sort().reverse(); // Newest date first
+            historyModalBody.innerHTML = '';
+
+            if (sortedDates.length === 0) { /* Handled by CSS */ }
+            else {
+                sortedDates.forEach((date, dateIndex) => {
+                    const entriesForDate = Array.isArray(allEntries[date]) ? allEntries[date] : [];
+                    entriesForDate.sort((a, b) => a.timestamp - b.timestamp);
+
+                    // Robust Date Parsing for Modal
+                    const dateParts = date.split('-');
+                    let entryDate = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
+                    let displayDate = "Invalid Date";
+                    if (!isNaN(entryDate.getTime())) {
+                        displayDate = entryDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+                    } else {
+                        console.warn("Encountered invalid date in history:", date);
+                    }
+
+                    const dateHeading = document.createElement('h3');
+                    dateHeading.className = 'history-entry-date';
+                    dateHeading.textContent = displayDate;
+                    historyModalBody.appendChild(dateHeading);
+
+                    entriesForDate.forEach((entry, entryIndex) => {
+                        if (entry && typeof entry.time === 'string' && typeof entry.text === 'string') {
+                            const itemDiv = document.createElement('div');
+                            itemDiv.className = 'history-entry-item';
+                            const timeSpan = document.createElement('span');
+                            timeSpan.className = 'history-entry-time';
+                            timeSpan.textContent = `[${entry.time}]`;
+                            const textSpan = document.createElement('span');
+                            textSpan.className = 'history-entry-text';
+                            textSpan.textContent = entry.text;
+                            itemDiv.appendChild(timeSpan);
+                            itemDiv.appendChild(textSpan);
+                            
+                            // Add staggered animation delay
+                            itemDiv.style.animationDelay = `${(dateIndex * 0.1) + (entryIndex * 0.05)}s`;
+                            
+                            historyModalBody.appendChild(itemDiv);
+                        } else {
+                            console.warn("Skipping invalid history entry structure:", entry);
+                        }
+                    });
+                });
+            }
+            historyModalOverlay.classList.add('visible');
+        }
+
+        function hideHistoryModal() {
+            historyModalOverlay.classList.remove('visible');
+        }
+
+        // --- Single Microphone Access Function ---
+        async function getOrRequestMicStream() {
+            if (microphoneStream && microphoneStream.active) {
+                console.log("Reusing existing microphone stream.");
+                return microphoneStream;
+            }
+            
+            console.log("Requesting new microphone stream.");
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showMessage("Your browser doesn't support microphone access.", 5000);
+                return null;
+            }
+            
+            try {
+                microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                console.log("Microphone access granted.");
+                return microphoneStream;
+            } catch (err) {
+                console.error("Error getting microphone stream:", err);
+                if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                    showMessage('Microphone access denied. Please allow access in browser settings.', 5000);
+                } else {
+                    showMessage('Could not access microphone. Please check connection/settings.', 5000);
+                }
+                microphoneStream = null;
+                return null;
+            }
+        }
+
+        // --- Audio Visualizer Functions ---
+        function createVisualizerBars() {
+            audioVisualizer.innerHTML = '';
+            visualizerBars = [];
+            
+            for (let i = 0; i < NUM_VISUALIZER_BARS; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'visualizer-bar';
+                audioVisualizer.appendChild(bar);
+                visualizerBars.push(bar);
+            }
+        }
+        
+        function setupAudioVisualizer() {
+            if (!supportsWebAudio || !microphoneStream || !microphoneStream.active) {
+                console.warn("Cannot setup visualizer: Web Audio not supported or no active stream.");
+                return;
+            }
+            
+            // Create visualizer bars if they don't exist
+            if (visualizerBars.length === 0) {
+                createVisualizerBars();
+            }
+            
+            // Show visualizer
+            audioVisualizer.classList.add('visible');
+            
+            // Avoid creating multiple contexts
+            if (audioContext && audioContext.state === 'running') {
+                console.log("AudioContext already running for visualizer.");
+                if (!animationFrameId) drawVisualizer();
+                return;
+            }
+            
+            // Close existing context if suspended or interrupted before creating new one
+            if (audioContext) {
+                console.warn("Closing existing/suspended AudioContext before recreating.");
+                audioContext.close().catch(e => console.error("Error closing previous AudioContext:", e));
+                audioContext = null;
+                analyser = null;
+            }
+
+            try {
+                audioContext = new AudioContext();
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256; // Smaller for better performance
+                bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                
+                // Use the existing shared microphoneStream
+                const source = audioContext.createMediaStreamSource(microphoneStream);
+                source.connect(analyser);
+                
+                drawVisualizer();
+                console.log("Audio visualizer setup complete using shared stream.");
+            } catch (err) {
+                console.error('Error setting up audio visualizer with shared stream:', err);
+                showMessage('Could not start audio visualizer.', 4000);
+                stopAudioVisualizer();
+            }
+        }
+
+        function drawVisualizer() {
+            if (!analyser || !isRecording || !audioContext || audioContext.state !== 'running') {
+                stopAudioVisualizer();
+                return;
+            }
+            
+            animationFrameId = requestAnimationFrame(drawVisualizer);
+            
+            analyser.getByteFrequencyData(dataArray);
+            
+            // We have NUM_VISUALIZER_BARS but bufferLength frequency bins
+            // So we need to sample from the frequency data
+            const step = Math.floor(bufferLength / NUM_VISUALIZER_BARS);
+            
+            for (let i = 0; i < NUM_VISUALIZER_BARS; i++) {
+                // Get data point from frequency data
+                const dataIndex = i * step;
+                const value = dataArray[dataIndex] / 255.0; // Normalize to 0-1
+                
+                // Apply value to bar height with some minimum height
+                const height = Math.max(3, value * 50);
+                visualizerBars[i].style.height = `${height}px`;
+                
+                // Adjust opacity based on value
+                visualizerBars[i].style.opacity = 0.3 + (value * 0.7);
+            }
+        }
+
+        async function stopAudioVisualizer() {
+            console.log("Stopping audio visualizer drawing and context...");
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            
+            audioVisualizer.classList.remove('visible');
+            
+            // Close the audio context ONLY. The stream is managed separately.
+            if (audioContext && audioContext.state !== 'closed') {
+                try {
+                    await audioContext.close();
+                    console.log("AudioContext closed.");
+                } catch (e) {
+                    console.error("Error closing AudioContext:", e);
+                } finally {
+                    audioContext = null;
+                    analyser = null;
+                }
+            } else {
+                audioContext = null;
+                analyser = null;
+            }
+        }
+
+        // --- UI State Management ---
+        function setRecordingState() {
+            isRecording = true;
+            recordButton.classList.add('recording');
+            recordButton.setAttribute('aria-label', 'Stop Recording');
+            liveTranscriptArea.textContent = '';
+            liveTranscriptArea.classList.add('visible');
+            setupAudioVisualizer();
+        }
+
+        function setIdleState() {
+            isRecording = false;
+            recordButton.classList.remove('recording');
+            recordButton.setAttribute('aria-label', 'Start Recording');
+            liveTranscriptArea.classList.remove('visible');
+            liveTranscriptArea.textContent = '';
+
+            stopAudioVisualizer();
+
+            // Stop the shared microphone stream tracks
+            if (microphoneStream) {
+                console.log("Stopping shared microphone stream tracks.");
+                microphoneStream.getTracks().forEach(track => track.stop());
+                microphoneStream = null;
+            }
+        }
+
+        // --- Web Speech API Setup ---
+        function initializeSpeechRecognition() {
+            if (!supportsSpeechRecognition) {
+                console.error("Speech Recognition not supported.");
+                showMessage("Voice input not supported by this browser.", 5000);
+                recordButton.disabled = true;
+                pastEntriesBtn.disabled = true;
+                transcriptionOutput.textContent = 'Voice input not supported.';
+                return;
+            }
+
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            recognition.onstart = () => {
+                console.log('Speech recognition started (after stream acquired).');
+                setRecordingState();
+                showMessage('Listening...', 6000);
+            };
+
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+                let sessionFinalTranscript = '';
+                
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        currentRecognitionTranscript += transcript.trim() + ' ';
+                        sessionFinalTranscript += transcript.trim() + ' ';
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+                
+                liveTranscriptArea.textContent = currentRecognitionTranscript + interimTranscript;
+            };
+
+            recognition.onend = () => {
+                console.log('Speech recognition stopped.');
+                const textToSave = currentRecognitionTranscript.trim();
+                setIdleState();
+
+                if (textToSave) {
+                    const savedEntry = saveEntry(textToSave);
+                    appendEntryToDisplay(savedEntry);
+                } else {
+                    console.log("No final transcript to save.");
+                }
+                
+                currentRecognitionTranscript = '';
+
+                // Clear any lingering "Listening..." message
+                if (messageBox.textContent === 'Listening...') {
+                    if (messageTimeoutId) clearTimeout(messageTimeoutId);
+                    messageBox.classList.remove('show');
+                    messageTimeoutId = null;
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error, event.message);
+                let errorMessage = `Speech error: ${event.error}.`;
+                
+                if (event.error === 'no-speech') errorMessage = "Didn't catch that. Please try again.";
+                else if (event.error === 'audio-capture') errorMessage = 'Microphone error. Check connection & permissions.';
+                else if (event.error === 'not-allowed') errorMessage = 'Microphone access denied. Please allow access in browser settings.';
+                else if (event.error === 'network') errorMessage = 'Network error during speech recognition.';
+                else if (event.error === 'aborted') errorMessage = 'Recording stopped.';
+                else errorMessage = `An unexpected error occurred: ${event.error}`;
+
+                showMessage(errorMessage, 5000);
+                setIdleState();
+                currentRecognitionTranscript = '';
+            };
+        }
+
+        // --- Background Animation ---
+        function createBackgroundBubbles() {
+            bgAnimationContainer.innerHTML = '';
+            bgBubbles = [];
+            
+            for (let i = 0; i < NUM_BG_BUBBLES; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bg-bubble';
+                
+                // Random size between 50px and 300px
+                const size = Math.random() * 250 + 50;
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                
+                // Random initial position
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                bubble.style.left = `${x}%`;
+                bubble.style.top = `${y}%`;
+                
+                // Random opacity
+                bubble.style.opacity = (Math.random() * 0.08 + 0.02).toString();
+                
+                bgAnimationContainer.appendChild(bubble);
+                bgBubbles.push(bubble);
+                
+                // Start animation after a small delay
+                setTimeout(() => {
+                    animateBubble(bubble);
+                }, Math.random() * 1000);
+            }
+        }
+        
+        function animateBubble(bubble) {
+            // Generate new random position
+            const newX = Math.random() * 100;
+            const newY = Math.random() * 100;
+            
+            // Set new position with transition
+            bubble.style.left = `${newX}%`;
+            bubble.style.top = `${newY}%`;
+            
+            // Schedule next animation after transition completes
+            setTimeout(() => {
+                animateBubble(bubble);
+            }, 20000 + Math.random() * 10000); // Random duration between 20-30s
+        }
+
+        // --- Event Listeners ---
+        recordButton.addEventListener('click', async () => {
+            if (!recognition || recordButton.disabled) return;
+
+            if (isRecording) {
+                try {
+                    recognition.stop();
+                } catch(e) {
+                    console.error("Error stopping recognition:", e);
+                    setIdleState();
+                }
+            } else {
+                const stream = await getOrRequestMicStream();
+
+                if (stream) {
+                    try {
+                        currentRecognitionTranscript = '';
+                        recognition.start();
+                    } catch (error) {
+                        if (error.name === 'InvalidStateError') {
+                            console.warn("Recognition start called while already starting/running.");
+                        } else {
+                            console.error("Error trying to start recognition:", error);
+                            showMessage("Could not start listening. Please wait and try again.");
+                            setIdleState();
+                        }
+                    }
+                } else {
+                    console.log("Microphone stream not acquired, cannot start recognition.");
+                    setIdleState();
+                }
+            }
+        });
+
+        pastEntriesBtn.addEventListener('click', showHistoryModal);
+        modalCloseBtn.addEventListener('click', hideHistoryModal);
+        historyModalOverlay.addEventListener('click', (event) => {
+            if (event.target === historyModalOverlay) {
+                hideHistoryModal();
+            }
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (isRecording && recognition) {
+                recognition.abort();
+                console.log("Aborted recognition on page unload.");
+            }
+            setIdleState();
+        });
+
+        // --- Initial Setup ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check overall support first
+            if (!supportsLocalStorage || !supportsSpeechRecognition || !supportsWebAudio) {
+                let missing = [];
+                if (!supportsLocalStorage) missing.push("Browser Storage");
+                if (!supportsSpeechRecognition) missing.push("Speech Recognition");
+                if (!supportsWebAudio) missing.push("Web Audio");
+                showMessage(`This app requires: ${missing.join(', ')}. Some features may be disabled.`, 8000);
+                recordButton.disabled = !supportsSpeechRecognition || !supportsWebAudio;
+                pastEntriesBtn.disabled = !supportsLocalStorage;
+            }
+
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            
+            createBackgroundBubbles();
+            createVisualizerBars();
+            
+            if (supportsSpeechRecognition) {
+                initializeSpeechRecognition();
+            }
+            
+            if (supportsLocalStorage) {
+                loadTodaysEntries();
+            } else {
+                transcriptionOutput.textContent = 'Browser storage not supported. Entries cannot be saved or loaded.';
+                transcriptionOutput.style.fontStyle = 'italic';
+            }
+        });
+    </script>
+</body>
+</html>
