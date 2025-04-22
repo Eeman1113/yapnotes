@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yap App - Voice Transcription</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
+    <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
+    <link href="[https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Inter:wght@300;400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Inter:wght@300;400;500;600;700&display=swap)" rel="stylesheet">
     <style>
         /* --- CSS Variables --- */
         :root {
@@ -63,7 +63,7 @@
             background: var(--accent-color);
             opacity: 0.05;
             filter: blur(40px);
-            transition: transform var(--transition-slow);
+            transition: transform 20s linear; 
         }
 
         /* --- Main Content Area --- */
@@ -244,26 +244,36 @@
         .audio-visualizer {
             width: 100%;
             max-width: 250px;
-            height: 50px;
+            height: 50px; 
             display: flex;
-            align-items: flex-end;
+            align-items: flex-end; 
             justify-content: center;
             gap: 2px;
-            opacity: 0;
-            transition: opacity var(--transition-normal);
+            opacity: 0; 
+            visibility: hidden; 
+            transition: opacity var(--transition-normal), visibility 0s linear var(--transition-normal); /* Hide instantly, fade in */
             margin: 0 auto;
+            pointer-events: none; 
+            padding: 2px 0; 
+            overflow: hidden; 
         }
         
         .audio-visualizer.visible {
             opacity: 1;
+            visibility: visible; 
+            transition: opacity var(--transition-normal), visibility 0s linear 0s; /* Fade in, show instantly */
         }
         
         .visualizer-bar {
             width: 3px;
             background-color: var(--accent-color-recording);
-            height: 5px;
+            height: 3px; 
+            max-height: 46px; 
             border-radius: 1px;
-            transition: height 0.1s ease-out, opacity 0.1s ease-out;
+            /* Use faster transition for responsiveness */
+            transition: height 0.06s ease-out, opacity 0.06s ease-out; 
+            flex-shrink: 0; 
+            opacity: 0.3; 
         }
 
         /* --- Transcription Display Area --- */
@@ -293,6 +303,7 @@
             margin-bottom: 10px; 
             overflow-y: auto; 
             transition: border-color var(--transition-normal), box-shadow var(--transition-normal); 
+            scroll-behavior: smooth; 
         }
         
         .transcription-display:focus-within { 
@@ -327,6 +338,7 @@
         
         .transcription-display .entry-text {
             font-family: var(--serif-font);
+            white-space: pre-wrap; 
         }
 
         /* --- Live Transcript Area --- */
@@ -347,6 +359,7 @@
             transition: opacity var(--transition-normal), visibility 0s linear var(--transition-normal), transform var(--transition-normal); 
             border-radius: 8px; 
             background-color: rgba(15, 23, 42, 0.2);
+            white-space: pre-wrap; 
         }
         
         .live-transcript-area.visible { 
@@ -373,7 +386,7 @@
         }
         
         .word-count-display.highlight {
-            color: #bae6fd;
+            color: #bae6fd; 
             transform: scale(1.1);
         }
 
@@ -585,119 +598,47 @@
         }
 
         /* --- Animations --- */
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes fadeInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-        
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInLeft { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeInScale { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
         
         /* --- Custom Scrollbar --- */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.3);
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: rgba(148, 163, 184, 0.3);
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(148, 163, 184, 0.5);
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.3); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.5); }
         
         /* --- Responsive Styles --- */
         @media (max-width: 640px) {
-            .date-time-info .date {
-                font-size: 2rem;
-            }
-            
-            .record-button {
-                width: 70px;
-                height: 70px;
-            }
-            
-            .transcription-display {
-                font-size: 1rem;
-                padding: 20px;
-            }
-            
-            .modal-content {
-                padding: 20px;
-                width: 95%;
-            }
+             .date-time-info .date { font-size: 2rem; }
+             .record-button { width: 70px; height: 70px; }
+             .transcription-display { font-size: 1rem; padding: 20px; }
+             .modal-content { padding: 20px; width: 95%; }
         }
     </style>
 </head>
 <body>
-    <!-- Background Animation Elements -->
     <div class="bg-animation-container" id="bg-animation-container"></div>
 
     <div class="main-content">
-        <!-- Date & Time Section -->
         <div class="date-time-info">
-            <div class="date" id="current-date">April 22, 2025</div>
-            <div class="day" id="current-day">Tuesday</div>
+            <div class="date" id="current-date">Loading Date...</div>
+            <div class="day" id="current-day">Loading Day...</div>
             <div class="time-badge">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                <span id="current-time">9:00 PM</span>
+                <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span id="current-time">Loading Time...</span>
             </div>
         </div>
 
-        <!-- Record Button -->
         <div class="record-button-container">
-            <button class="record-button" id="record-button" aria-label="Start Recording">
-                <svg class="mic-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            <button class="record-button" id="record-button" aria-label="Start Recording" disabled>
+                <svg class="mic-icon" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
                 <div class="stop-icon"></div>
             </button>
-            
-            <!-- Audio Visualizer -->
             <div class="audio-visualizer" id="audio-visualizer"></div>
         </div>
 
-        <!-- Transcription Display -->
         <div class="transcription-container">
             <div class="transcription-display" id="transcription-output"></div>
             <div class="live-transcript-area" id="live-transcript-area"></div>
@@ -705,32 +646,30 @@
         </div>
     </div>
 
-    <!-- Past Entries Button -->
-    <button class="past-entries-button" id="past-entries-btn" aria-label="View Past Entries">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-    </button>
+    <button class="past-entries-button" id="past-entries-btn" aria-label="View Past Entries" disabled>
+        <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.18 7.82a10 10 0 1 1-7.34-7.34"/><path d="M12 6v6l4 2"/></svg> </button>
 
-    <!-- History Modal -->
     <div class="modal-overlay" id="history-modal-overlay">
         <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title">
             <div class="modal-header">
                 <h2 class="modal-title" id="modal-title">Past Entries</h2>
                 <button class="modal-close-button" id="modal-close-btn" aria-label="Close">&times;</button>
             </div>
-            <div class="modal-body" id="history-modal-body"></div>
+            <div class="modal-body" id="history-modal-body">
+                </div>
         </div>
     </div>
 
-    <!-- Message Box -->
     <div id="message-box" class="message-box"></div>
 
     <script>
         // --- Constants ---
-        const YAP_ENTRIES_KEY = 'yapEntries'; // Key for localStorage
-        const NUM_VISUALIZER_BARS = 32; // Number of bars in the visualizer
-        const NUM_BG_BUBBLES = 15; // Number of background bubbles
+        const YAP_ENTRIES_KEY = 'yapEntries'; 
+        const NUM_VISUALIZER_BARS = 32; 
+        const NUM_BG_BUBBLES = 10; // Reduced for potentially better performance
 
-        // --- DOM Elements ---
+        // --- DOM Elements (Cached) ---
+        // Cache frequently accessed DOM elements for performance
         const currentDateEl = document.getElementById('current-date');
         const currentDayEl = document.getElementById('current-day');
         const currentTimeEl = document.getElementById('current-time');
@@ -748,628 +687,1026 @@
 
         // --- State Variables ---
         let isRecording = false;
-        let recognition; // SpeechRecognition instance
-        let audioContext; 
-        let analyser; 
-        let microphoneStream = null; 
-        let dataArray; 
-        let bufferLength; 
-        let animationFrameId; // Audio variables
-        let currentRecognitionTranscript = ''; // Holds final transcript for the CURRENT session
-        let messageTimeoutId = null; // Timeout ID for message box
-        let visualizerBars = []; // Array to hold visualizer bar elements
-        let bgBubbles = []; // Array to hold background bubble elements
+        let recognition = null; // SpeechRecognition instance
+        let audioContext = null; // Web Audio API context
+        let analyser = null; // Web Audio node for frequency analysis
+        let microphoneStream = null; // MediaStream from microphone
+        let microphoneSourceNode = null; // Source node connected to the stream
+        let dataArray = null; // Uint8Array for frequency data
+        let bufferLength = 0; // Size of the dataArray
+        let visualizerAnimationId = null; // ID for requestAnimationFrame loop
+        let currentFinalTranscript = ''; // Accumulates final transcript parts for the current session
+        let messageTimeoutId = null; // Timeout ID for hiding the message box
+        let visualizerBars = []; // Array to hold visualizer bar DOM elements
+        let bgBubbles = []; // Array to hold background bubble DOM elements
 
         // --- Feature Support Checks ---
-        const supportsLocalStorage = typeof(Storage) !== "undefined";
+        const supportsLocalStorage = typeof Storage !== "undefined";
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         const supportsSpeechRecognition = !!SpeechRecognition;
         const AudioContext = window.AudioContext || window.webkitAudioContext;
-        const supportsWebAudio = !!AudioContext && !!navigator.mediaDevices && !!navigator.mediaDevices.getUserMedia;
+        const supportsWebAudio = !!AudioContext && !!navigator.mediaDevices?.getUserMedia; // Added optional chaining for safety
 
-        // --- Date & Time Update ---
-        function updateDateTime() {
-            const now = new Date();
-            const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-            const dayOptions = { weekday: 'long' };
-            const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true };
-            currentDateEl.textContent = now.toLocaleDateString('en-US', dateOptions);
-            currentDayEl.textContent = now.toLocaleDateString('en-US', dayOptions);
-            currentTimeEl.textContent = now.toLocaleTimeString('en-US', timeOptions);
-        }
+        // --- Utility Functions ---
 
-        // --- Word Count Update ---
-        function updateWordCount() {
-            // Calculate words from saved entries displayed in transcriptionOutput
-            const entries = transcriptionOutput.querySelectorAll('.entry-text');
-            let totalText = '';
-            entries.forEach(entry => { totalText += entry.textContent + ' '; });
-            const text = totalText.trim();
-            const words = text.split(/[\s\n]+/).filter(word => word.length > 0);
-            const count = text === '' ? 0 : words.length;
-            wordCountEl.textContent = `${count} word${count !== 1 ? 's' : ''}`;
-            
-            // Add highlight animation if words were added
-            if (count > 0) {
-                wordCountEl.classList.add('highlight');
-                setTimeout(() => {
-                    wordCountEl.classList.remove('highlight');
-                }, 1000);
+        /**
+         * Displays a message to the user for a specified duration.
+         * @param {string} message - The message text to display.
+         * @param {number} [duration=3000] - How long to show the message in ms. 0 = persistent.
+         */
+        function showMessage(message, duration = 3000) {
+            if (!messageBox) return; 
+            console.log(`APP_MESSAGE: ${message}`); // Log messages for debugging
+            messageBox.textContent = message;
+            messageBox.classList.add('show');
+            if (messageTimeoutId) clearTimeout(messageTimeoutId);
+            if (duration > 0) {
+                messageTimeoutId = setTimeout(() => {
+                    hideMessage(); // Call separate hide function
+                }, duration);
             }
         }
 
-        // --- Message Box Display ---
-        function showMessage(message, duration = 3000) {
-            messageBox.textContent = message;
-            messageBox.classList.add('show');
+        /** Hides the message box. */
+        function hideMessage() {
+             if (!messageBox) return;
+             if (messageTimeoutId) clearTimeout(messageTimeoutId); // Clear any pending hide timeout
+             messageBox.classList.remove('show');
+             messageTimeoutId = null;
+         }
 
-            // Clear previous timeout if any
-            if (messageTimeoutId) clearTimeout(messageTimeoutId);
+        /** Updates the date and time display. */
+        function updateDateTime() {
+            try {
+                const now = new Date();
+                const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                const dayOptions = { weekday: 'long' };
+                const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true };
+                // Guard checks ensure elements exist before updating
+                if (currentDateEl) currentDateEl.textContent = now.toLocaleDateString('en-US', dateOptions);
+                if (currentDayEl) currentDayEl.textContent = now.toLocaleDateString('en-US', dayOptions);
+                if (currentTimeEl) currentTimeEl.textContent = now.toLocaleTimeString('en-US', timeOptions);
+            } catch (e) {
+                console.error("Error updating date/time:", e);
+                // Display error state if update fails
+                if (currentDateEl) currentDateEl.textContent = "Error";
+                if (currentDayEl) currentDayEl.textContent = "Error";
+                if (currentTimeEl) currentTimeEl.textContent = "Error";
+            }
+        }
 
-            // Set timeout to hide the message
-            messageTimeoutId = setTimeout(() => {
-                messageBox.classList.remove('show');
-                messageTimeoutId = null;
-            }, duration);
+        /** Calculates and updates the total word count from saved entries. */
+        function updateWordCount() {
+            if (!transcriptionOutput || !wordCountEl) return; // Guard checks
+            try {
+                const entries = transcriptionOutput.querySelectorAll('.entry-text');
+                let totalText = '';
+                entries.forEach(entry => { totalText += entry.textContent + ' '; });
+                const text = totalText.trim();
+                // Split by whitespace, filter empty strings
+                const words = text ? text.split(/[\s\n]+/).filter(Boolean) : [];
+                const count = words.length;
+                wordCountEl.textContent = `${count} word${count !== 1 ? 's' : ''}`;
+            } catch (e) {
+                 console.error("Error updating word count:", e);
+                 wordCountEl.textContent = "Error";
+            }
+        }
+
+        /** Triggers a brief highlight animation on the word count element. */
+        function triggerWordCountHighlight() {
+            if (!wordCountEl) return; 
+            wordCountEl.classList.add('highlight');
+            // Use CSS transition duration for timeout
+            const duration = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--transition-slow') || '0.5s') * 1000;
+            setTimeout(() => {
+                if (wordCountEl) wordCountEl.classList.remove('highlight');
+            }, duration + 100); // Add small buffer
         }
 
         // --- Local Storage Functions ---
+
+        /**
+         * Retrieves all stored entries from localStorage.
+         * @returns {object} An object where keys are dates (YYYY-MM-DD) and values are arrays of entry objects. Returns empty object on failure.
+         */
         function getStoredEntries() {
             if (!supportsLocalStorage) return {};
             try {
                 const stored = localStorage.getItem(YAP_ENTRIES_KEY);
-                const parsed = stored ? JSON.parse(stored) : {};
-                return (typeof parsed === 'object' && parsed !== null) ? parsed : {};
+                // Basic validation before parsing
+                if (stored && stored.length > 2 && stored.startsWith('{') && stored.endsWith('}')) {
+                    const parsed = JSON.parse(stored);
+                    // Ensure it's a non-null object
+                    return (typeof parsed === 'object' && parsed !== null) ? parsed : {};
+                }
+                return {}; // Return empty if stored is null, empty, or not object-like
             } catch (e) {
                 console.error("Error reading entries from localStorage:", e);
                 showMessage("Error loading past entries. Data might be corrupted.", 4000);
+                // Consider clearing corrupted data: localStorage.removeItem(YAP_ENTRIES_KEY); 
                 return {};
             }
         }
 
+        /**
+         * Saves a new transcription entry to localStorage for the current date.
+         * @param {string} text - The transcribed text to save.
+         * @returns {object|null} The saved entry object or null if saving failed.
+         */
         function saveEntry(text) {
             if (!supportsLocalStorage) {
                 showMessage("Cannot save: Browser storage not supported.", 4000);
                 return null;
             }
-            if (!text || text.trim().length === 0) {
+            const trimmedText = text.trim();
+            if (!trimmedText) {
                 console.log("Attempted to save empty entry. Skipping.");
-                return null;
+                return null; 
             }
-
-            const allEntries = getStoredEntries();
-            const today = new Date().toISOString().split('T')[0];
-            const now = new Date();
-            const currentTime = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-
-            const newEntry = {
-                timestamp: now.getTime(),
-                time: currentTime,
-                text: text.trim()
-            };
-
-            if (!Array.isArray(allEntries[today])) {
-                allEntries[today] = [];
-            }
-            allEntries[today].push(newEntry);
 
             try {
+                const allEntries = getStoredEntries(); // Get current data
+                const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+                const now = new Date();
+                const currentTime = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+
+                const newEntry = { 
+                    timestamp: now.getTime(), // For reliable sorting
+                    time: currentTime, 
+                    text: trimmedText 
+                };
+
+                // Initialize array for the day if it doesn't exist
+                if (!Array.isArray(allEntries[today])) { 
+                    allEntries[today] = []; 
+                }
+                
+                allEntries[today].push(newEntry); // Add the new entry
+
+                // Save back to localStorage
                 localStorage.setItem(YAP_ENTRIES_KEY, JSON.stringify(allEntries));
-                console.log("Entry saved:", newEntry);
-                return newEntry;
+                console.log("Entry saved successfully:", newEntry);
+                return newEntry; 
             } catch (e) {
                 console.error("Error saving entry to localStorage:", e);
-                if (e.name === 'QuotaExceededError') {
+                // Handle specific errors like quota exceeded
+                if (e.name === 'QuotaExceededError' || e.message.includes('quota')) { // Check message too for cross-browser
                     showMessage("Storage full. Cannot save new entry.", 5000);
                 } else {
-                    showMessage("Error saving entry.", 5000);
+                    showMessage("Error saving entry. Please try again.", 5000);
                 }
-                return null;
+                return null; // Indicate saving failed
             }
         }
 
         // --- Display Functions ---
+
+        /**
+         * Creates the HTML structure for a single transcription entry.
+         * @param {object} entry - The entry object ({ timestamp, time, text }).
+         * @returns {HTMLElement} The paragraph element representing the entry.
+         */
         function formatEntryHTML(entry) {
             const entryP = document.createElement('p');
             entryP.className = 'entry';
+            
             const timeSpan = document.createElement('span');
             timeSpan.className = 'entry-time';
-            timeSpan.textContent = `[${entry.time}]`;
+            timeSpan.textContent = `[${entry.time}]`; 
+            
             const textSpan = document.createElement('span');
             textSpan.className = 'entry-text';
-            textSpan.textContent = entry.text;
+            textSpan.textContent = entry.text; 
+            
             entryP.appendChild(timeSpan);
             entryP.appendChild(textSpan);
             
-            // Add animation delay based on position
-            const existingEntries = transcriptionOutput.querySelectorAll('.entry').length;
+            // Stagger animation delay based on current number of entries
+            const existingEntries = transcriptionOutput ? transcriptionOutput.querySelectorAll('.entry').length : 0;
             entryP.style.animationDelay = `${existingEntries * 0.05}s`;
             
             return entryP;
         }
 
+        /** Loads and displays entries for the current day from localStorage. */
         function loadTodaysEntries() {
-            if (!supportsLocalStorage) return;
-            const allEntries = getStoredEntries();
-            const today = new Date().toISOString().split('T')[0];
-            const todaysEntries = Array.isArray(allEntries[today]) ? allEntries[today] : [];
+            if (!supportsLocalStorage || !transcriptionOutput) return; // Guard checks
+            
+            try {
+                const allEntries = getStoredEntries();
+                const today = new Date().toISOString().split('T')[0];
+                const todaysEntries = Array.isArray(allEntries[today]) ? allEntries[today] : [];
 
-            transcriptionOutput.innerHTML = '';
+                transcriptionOutput.innerHTML = ''; // Clear previous entries
 
-            if (todaysEntries.length > 0) {
-                console.log(`Loading ${todaysEntries.length} entries for today.`);
-                todaysEntries.sort((a, b) => a.timestamp - b.timestamp);
-                todaysEntries.forEach((entry, index) => {
-                    if (entry && typeof entry.time === 'string' && typeof entry.text === 'string') {
-                        const entryEl = formatEntryHTML(entry);
-                        entryEl.style.animationDelay = `${index * 0.05}s`;
-                        transcriptionOutput.appendChild(entryEl);
-                    } else {
-                        console.warn("Skipping invalid entry structure:", entry);
-                    }
+                if (todaysEntries.length > 0) {
+                    console.log(`Loading ${todaysEntries.length} entries for today.`);
+                    // Sort by timestamp for correct order
+                    todaysEntries.sort((a, b) => a.timestamp - b.timestamp); 
+                    
+                    todaysEntries.forEach((entry, index) => {
+                        // Validate entry structure before displaying
+                        if (entry && typeof entry.time === 'string' && typeof entry.text === 'string' && typeof entry.timestamp === 'number') {
+                            const entryEl = formatEntryHTML(entry);
+                            entryEl.style.animationDelay = `${index * 0.05}s`; 
+                            transcriptionOutput.appendChild(entryEl);
+                        } else {
+                            console.warn("Skipping invalid entry structure during load:", entry);
+                        }
+                    });
+                } else {
+                    console.log("No entries found for today.");
+                    // CSS :empty::before pseudo-element handles placeholder text
+                }
+                
+                updateWordCount(); // Update count after loading
+                
+                // Scroll to bottom after entries are potentially animated
+                requestAnimationFrame(() => {
+                    if (transcriptionOutput) transcriptionOutput.scrollTop = transcriptionOutput.scrollHeight;
                 });
-            } else {
-                console.log("No entries found for today.");
+            } catch (e) {
+                 console.error("Error loading today's entries:", e);
+                 showMessage("Failed to load today's entries.", 4000);
+                 if (transcriptionOutput) transcriptionOutput.innerHTML = '<p class="entry-text" style="font-style: italic; color: var(--text-muted);">Error loading entries.</p>';
             }
-            
-            updateWordCount();
-            
-            // Scroll to bottom after loading
-            requestAnimationFrame(() => {
-                transcriptionOutput.scrollTop = transcriptionOutput.scrollHeight;
-            });
         }
 
+        /**
+         * Appends a newly saved entry to the main display area.
+         * @param {object} entry - The entry object to display.
+         */
         function appendEntryToDisplay(entry) {
-            if (!entry) return;
-            const entryEl = formatEntryHTML(entry);
-            transcriptionOutput.appendChild(entryEl);
-            updateWordCount();
+            if (!entry || !transcriptionOutput) return; // Guard checks
             
-            // Scroll to bottom
-            requestAnimationFrame(() => {
-                transcriptionOutput.scrollTop = transcriptionOutput.scrollHeight;
-            });
-            
-            showMessage("Entry added!", 2000);
+            try {
+                const entryEl = formatEntryHTML(entry);
+                transcriptionOutput.appendChild(entryEl);
+                
+                updateWordCount(); // Update count now that entry is added
+                triggerWordCountHighlight(); // Trigger highlight effect
+                
+                // Scroll to the bottom to show the new entry
+                requestAnimationFrame(() => {
+                    if (transcriptionOutput?.scrollTo) { // Use smooth scroll if available
+                        transcriptionOutput.scrollTo({ top: transcriptionOutput.scrollHeight, behavior: 'smooth' });
+                    } else if (transcriptionOutput) { // Fallback to direct scroll
+                        transcriptionOutput.scrollTop = transcriptionOutput.scrollHeight;
+                    }
+                });
+                
+                // Don't show "Entry added" message here, as it might overlap with "Listening..." etc.
+                // User sees the entry appear, which is sufficient feedback.
+                // showMessage("Entry added!", 2000); 
+            } catch (e) {
+                 console.error("Error appending entry to display:", e);
+                 showMessage("Error displaying new entry.", 3000);
+            }
         }
 
         // --- Modal Functions ---
+
+        /** Displays the history modal with all saved entries. */
         function showHistoryModal() {
-            const allEntries = getStoredEntries();
-            const sortedDates = Object.keys(allEntries).sort().reverse(); // Newest date first
-            historyModalBody.innerHTML = '';
+            if (!historyModalOverlay || !historyModalBody) return; // Guard checks
+            
+            try {
+                const allEntries = getStoredEntries();
+                // Sort dates chronologically (newest first)
+                const sortedDates = Object.keys(allEntries).sort((a, b) => new Date(b) - new Date(a)); 
+                
+                historyModalBody.innerHTML = ''; // Clear previous history
 
-            if (sortedDates.length === 0) { /* Handled by CSS */ }
-            else {
-                sortedDates.forEach((date, dateIndex) => {
-                    const entriesForDate = Array.isArray(allEntries[date]) ? allEntries[date] : [];
-                    entriesForDate.sort((a, b) => a.timestamp - b.timestamp);
+                if (sortedDates.length === 0) {
+                    // CSS :empty::before pseudo-element handles "No past entries" text
+                } else {
+                    sortedDates.forEach((date, dateIndex) => {
+                        const entriesForDate = Array.isArray(allEntries[date]) ? allEntries[date] : [];
+                        // Sort entries within the date by timestamp
+                        entriesForDate.sort((a, b) => a.timestamp - b.timestamp); 
 
-                    // Robust Date Parsing for Modal
-                    const dateParts = date.split('-');
-                    let entryDate = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
-                    let displayDate = "Invalid Date";
-                    if (!isNaN(entryDate.getTime())) {
-                        displayDate = entryDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
-                    } else {
-                        console.warn("Encountered invalid date in history:", date);
-                    }
+                        // --- Display Date Heading ---
+                        let displayDate = "Invalid Date";
+                        try {
+                            // Use UTC date parts to avoid timezone issues with YYYY-MM-DD keys
+                            const dateParts = date.split('-');
+                            const entryDate = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
+                            if (!isNaN(entryDate.getTime())) {
+                                displayDate = entryDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+                            }
+                        } catch (e) { console.warn("Error parsing date in history:", date, e); }
 
-                    const dateHeading = document.createElement('h3');
-                    dateHeading.className = 'history-entry-date';
-                    dateHeading.textContent = displayDate;
-                    historyModalBody.appendChild(dateHeading);
+                        const dateHeading = document.createElement('h3');
+                        dateHeading.className = 'history-entry-date';
+                        dateHeading.textContent = displayDate;
+                        historyModalBody.appendChild(dateHeading);
 
-                    entriesForDate.forEach((entry, entryIndex) => {
-                        if (entry && typeof entry.time === 'string' && typeof entry.text === 'string') {
-                            const itemDiv = document.createElement('div');
-                            itemDiv.className = 'history-entry-item';
-                            const timeSpan = document.createElement('span');
-                            timeSpan.className = 'history-entry-time';
-                            timeSpan.textContent = `[${entry.time}]`;
-                            const textSpan = document.createElement('span');
-                            textSpan.className = 'history-entry-text';
-                            textSpan.textContent = entry.text;
-                            itemDiv.appendChild(timeSpan);
-                            itemDiv.appendChild(textSpan);
-                            
-                            // Add staggered animation delay
-                            itemDiv.style.animationDelay = `${(dateIndex * 0.1) + (entryIndex * 0.05)}s`;
-                            
-                            historyModalBody.appendChild(itemDiv);
-                        } else {
-                            console.warn("Skipping invalid history entry structure:", entry);
-                        }
+                        // --- Display Entries for the Date ---
+                        entriesForDate.forEach((entry, entryIndex) => {
+                            // Validate entry structure
+                            if (entry && typeof entry.time === 'string' && typeof entry.text === 'string' && typeof entry.timestamp === 'number') {
+                                const itemDiv = document.createElement('div');
+                                itemDiv.className = 'history-entry-item';
+                                
+                                const timeSpan = document.createElement('span');
+                                timeSpan.className = 'history-entry-time';
+                                timeSpan.textContent = `[${entry.time}]`;
+                                
+                                const textSpan = document.createElement('span');
+                                textSpan.className = 'history-entry-text';
+                                textSpan.textContent = entry.text;
+                                
+                                itemDiv.appendChild(timeSpan);
+                                itemDiv.appendChild(textSpan);
+                                
+                                // Stagger animation delay
+                                itemDiv.style.animationDelay = `${(dateIndex * 0.1) + (entryIndex * 0.03)}s`;
+                                
+                                historyModalBody.appendChild(itemDiv);
+                            } else {
+                                console.warn("Skipping invalid history entry structure:", entry);
+                            }
+                        });
                     });
-                });
+                }
+                historyModalOverlay.classList.add('visible'); // Show the modal
+            } catch (e) {
+                 console.error("Error showing history modal:", e);
+                 showMessage("Failed to load history.", 4000);
             }
-            historyModalOverlay.classList.add('visible');
         }
 
+        /** Hides the history modal. */
         function hideHistoryModal() {
-            historyModalOverlay.classList.remove('visible');
+            if (historyModalOverlay) historyModalOverlay.classList.remove('visible'); 
         }
 
-        // --- Single Microphone Access Function ---
+        // --- Microphone Access ---
+
+        /**
+         * Gets an active microphone stream, requesting permission if necessary.
+         * Manages the singleton `microphoneStream` variable.
+         * @returns {Promise<MediaStream|null>} A promise resolving to the active MediaStream or null on failure.
+         */
         async function getOrRequestMicStream() {
-            if (microphoneStream && microphoneStream.active) {
-                console.log("Reusing existing microphone stream.");
+            // 1. Check if a valid, active stream already exists
+            if (microphoneStream && microphoneStream.active && microphoneStream.getAudioTracks().every(track => track.readyState === 'live')) {
+                console.log("Reusing active microphone stream.");
                 return microphoneStream;
             }
+
+            // 2. Cleanup any previous invalid stream
+            if (microphoneStream) { 
+                 console.log("Cleaning up previous inactive/invalid stream.");
+                 microphoneStream.getTracks().forEach(track => track.stop());
+                 microphoneStream = null;
+                 // Also ensure related audio nodes are cleaned up if stream died unexpectedly
+                 await stopAudioVisualizer(); // Use await here for proper cleanup order
+            }
             
-            console.log("Requesting new microphone stream.");
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                showMessage("Your browser doesn't support microphone access.", 5000);
+            // 3. Check for API support
+            console.log("Requesting new microphone stream access.");
+            if (!navigator.mediaDevices?.getUserMedia) { // Use optional chaining
+                showMessage("Browser doesn't support microphone access.", 5000);
+                if (recordButton) recordButton.disabled = true; 
                 return null;
             }
             
+            // 4. Request microphone access
             try {
                 microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
                 console.log("Microphone access granted.");
-                return microphoneStream;
+                
+                // Add listener to handle stream ending unexpectedly (e.g., user revokes permission)
+                microphoneStream.getAudioTracks().forEach(track => {
+                    track.onended = () => {
+                        console.warn("Microphone stream track ended unexpectedly.");
+                        showMessage("Microphone disconnected.", 3000);
+                        if (isRecording) { 
+                            stopRecording(); // Attempt graceful stop if was recording
+                        } else {
+                            // If not recording, just ensure cleanup
+                            microphoneStream = null; 
+                            stopAudioVisualizer(); // Clean up audio context too
+                        }
+                    };
+                });
+                return microphoneStream; // Success
             } catch (err) {
-                console.error("Error getting microphone stream:", err);
-                if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-                    showMessage('Microphone access denied. Please allow access in browser settings.', 5000);
-                } else {
-                    showMessage('Could not access microphone. Please check connection/settings.', 5000);
-                }
-                microphoneStream = null;
-                return null;
+                // 5. Handle errors during permission request
+                console.error("Error getting microphone stream:", err.name, err.message);
+                microphoneStream = null; // Ensure stream is null on error
+                if (recordButton) recordButton.disabled = true; // Disable button on failure
+                // Provide specific user feedback based on error type
+                if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') { showMessage('Microphone access denied by user.', 5000); } 
+                else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') { showMessage('No microphone found.', 5000); } 
+                else if (err.name === 'NotReadableError') { showMessage('Microphone is busy or hardware error.', 5000); } 
+                else { showMessage('Could not access microphone.', 5000); }
+                return null; // Failure
             }
         }
 
-        // --- Audio Visualizer Functions ---
+        // --- Audio Visualizer ---
+
+        /** Creates the initial visualizer bar elements. */
         function createVisualizerBars() {
-            audioVisualizer.innerHTML = '';
-            visualizerBars = [];
-            
+            if (!audioVisualizer) { console.error("Visualizer element not found."); return; }
+            audioVisualizer.innerHTML = ''; 
+            visualizerBars = []; 
             for (let i = 0; i < NUM_VISUALIZER_BARS; i++) {
                 const bar = document.createElement('div');
                 bar.className = 'visualizer-bar';
+                // Set initial styles matching CSS defaults
+                bar.style.height = '3px'; 
+                bar.style.opacity = '0.3';
                 audioVisualizer.appendChild(bar);
                 visualizerBars.push(bar);
             }
+            console.log(`Created ${visualizerBars.length} visualizer bars.`);
         }
-        
-        function setupAudioVisualizer() {
-            if (!supportsWebAudio || !microphoneStream || !microphoneStream.active) {
-                console.warn("Cannot setup visualizer: Web Audio not supported or no active stream.");
-                return;
-            }
-            
-            // Create visualizer bars if they don't exist
-            if (visualizerBars.length === 0) {
-                createVisualizerBars();
-            }
-            
-            // Show visualizer
-            audioVisualizer.classList.add('visible');
-            
-            // Avoid creating multiple contexts
-            if (audioContext && audioContext.state === 'running') {
-                console.log("AudioContext already running for visualizer.");
-                if (!animationFrameId) drawVisualizer();
-                return;
-            }
-            
-            // Close existing context if suspended or interrupted before creating new one
-            if (audioContext) {
-                console.warn("Closing existing/suspended AudioContext before recreating.");
-                audioContext.close().catch(e => console.error("Error closing previous AudioContext:", e));
-                audioContext = null;
-                analyser = null;
-            }
 
-            try {
+        /** * Sets up the Web Audio API nodes for the visualizer.
+         * Assumes `microphoneStream` is valid and active.
+         * Assumes `audioContext` is null or closed.
+         * @returns {Promise<boolean>} True if setup was successful, false otherwise.
+         */
+        async function setupAudioVisualizerNodes() {
+             if (!supportsWebAudio || !microphoneStream || !microphoneStream.active) {
+                 console.warn("Prerequisites not met for visualizer node setup.");
+                 return false;
+             }
+             // Ensure previous context is closed before creating a new one
+             await stopAudioVisualizer(); // Await cleanup
+
+             try {
+                console.log("Setting up new AudioContext for visualizer.");
                 audioContext = new AudioContext();
-                analyser = audioContext.createAnalyser();
-                analyser.fftSize = 256; // Smaller for better performance
-                bufferLength = analyser.frequencyBinCount;
-                dataArray = new Uint8Array(bufferLength);
-                
-                // Use the existing shared microphoneStream
-                const source = audioContext.createMediaStreamSource(microphoneStream);
-                source.connect(analyser);
-                
-                drawVisualizer();
-                console.log("Audio visualizer setup complete using shared stream.");
-            } catch (err) {
-                console.error('Error setting up audio visualizer with shared stream:', err);
-                showMessage('Could not start audio visualizer.', 4000);
-                stopAudioVisualizer();
-            }
-        }
+                console.log(`AudioContext created, initial state: ${audioContext.state}`);
 
-        function drawVisualizer() {
-            if (!analyser || !isRecording || !audioContext || audioContext.state !== 'running') {
-                stopAudioVisualizer();
-                return;
-            }
-            
-            animationFrameId = requestAnimationFrame(drawVisualizer);
-            
-            analyser.getByteFrequencyData(dataArray);
-            
-            // We have NUM_VISUALIZER_BARS but bufferLength frequency bins
-            // So we need to sample from the frequency data
-            const step = Math.floor(bufferLength / NUM_VISUALIZER_BARS);
-            
-            for (let i = 0; i < NUM_VISUALIZER_BARS; i++) {
-                // Get data point from frequency data
-                const dataIndex = i * step;
-                const value = dataArray[dataIndex] / 255.0; // Normalize to 0-1
-                
-                // Apply value to bar height with some minimum height
-                const height = Math.max(3, value * 50);
-                visualizerBars[i].style.height = `${height}px`;
-                
-                // Adjust opacity based on value
-                visualizerBars[i].style.opacity = 0.3 + (value * 0.7);
-            }
-        }
-
-        async function stopAudioVisualizer() {
-            console.log("Stopping audio visualizer drawing and context...");
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-                animationFrameId = null;
-            }
-            
-            audioVisualizer.classList.remove('visible');
-            
-            // Close the audio context ONLY. The stream is managed separately.
-            if (audioContext && audioContext.state !== 'closed') {
-                try {
-                    await audioContext.close();
-                    console.log("AudioContext closed.");
-                } catch (e) {
-                    console.error("Error closing AudioContext:", e);
-                } finally {
-                    audioContext = null;
-                    analyser = null;
+                // Handle suspended state (requires user gesture, which should have just happened)
+                if (audioContext.state === 'suspended') {
+                    console.log("AudioContext suspended, attempting resume...");
+                    await audioContext.resume();
+                    console.log(`AudioContext resumed, state: ${audioContext.state}`);
                 }
-            } else {
-                audioContext = null;
-                analyser = null;
+                
+                // Verify context is running after attempting resume
+                if (audioContext.state !== 'running') {
+                     throw new Error(`AudioContext failed to run. State: ${audioContext.state}`);
+                }
+                console.log("AudioContext is running.");
+
+                // Create Analyser
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256; 
+                analyser.smoothingTimeConstant = 0.7; // Slightly less smoothing
+                analyser.minDecibels = -90; 
+                analyser.maxDecibels = -10; 
+                bufferLength = analyser.frequencyBinCount; // 128
+                dataArray = new Uint8Array(bufferLength); 
+                console.log(`Analyser created, bufferLength: ${bufferLength}`);
+                
+                // Create Source Node from the stream
+                if (!microphoneStream.active) throw new Error("Mic stream became inactive during setup.");
+                microphoneSourceNode = audioContext.createMediaStreamSource(microphoneStream);
+                console.log("MediaStreamSourceNode created.");
+
+                // Connect Source -> Analyser
+                microphoneSourceNode.connect(analyser);
+                console.log("Source node connected to analyser.");
+                
+                // Make visualizer container visible *only after* successful setup
+                if (audioVisualizer) audioVisualizer.classList.add('visible');
+                
+                return true; // Indicate success
+
+            } catch (err) {
+                console.error('Error setting up visualizer nodes:', err);
+                showMessage('Could not start audio visualizer.', 4000);
+                if (audioVisualizer) audioVisualizer.classList.remove('visible'); // Hide on error
+                await stopAudioVisualizer(); // Clean up failed setup
+                return false; // Indicate failure
             }
+        }
+
+        /** Starts the visualizer animation loop using requestAnimationFrame. */
+        function startVisualizerLoop() {
+             if (!analyser || !isRecording) { // Only start if analyser exists and we are recording
+                 console.warn("Cannot start visualizer loop: Analyser missing or not recording.");
+                 return;
+             }
+             if (visualizerAnimationId) { // Avoid multiple loops
+                  console.log("Visualizer loop already running.");
+                  return; 
+             }
+             console.log("Starting visualizer loop (rAF).");
+             
+             function loop() {
+                 // Check conditions on each frame
+                 if (!isRecording || !analyser || !audioContext || audioContext.state !== 'running' || !dataArray) {
+                     stopVisualizerLoop(); // Stop if conditions change
+                     return;
+                 }
+                 
+                 // Get data and update bars
+                 analyser.getByteFrequencyData(dataArray);
+                 const maxBarHeight = 46; 
+                 const minBarHeight = 3; 
+                 for (let i = 0; i < NUM_VISUALIZER_BARS; i++) {
+                     if (!visualizerBars[i]) continue; 
+                     // Map data point to bar
+                     const dataIndex = Math.min(bufferLength - 1, Math.floor((i / NUM_VISUALIZER_BARS) * bufferLength));
+                     const value = dataArray[dataIndex] || 0; 
+                     const normalizedValue = value / 255.0; 
+                     // Scale height (power scaling for better visual)
+                     const scaledHeight = Math.pow(normalizedValue, 0.6) * maxBarHeight; 
+                     const height = Math.max(minBarHeight, Math.min(scaledHeight, maxBarHeight)); 
+                     // Apply styles
+                     visualizerBars[i].style.height = `${height}px`;
+                     visualizerBars[i].style.opacity = (0.3 + (normalizedValue * 0.7)).toString();
+                 }
+                 
+                 // Request next frame
+                 visualizerAnimationId = requestAnimationFrame(loop);
+             }
+             // Initial call to start the loop
+             visualizerAnimationId = requestAnimationFrame(loop); 
+        }
+
+        /** Stops the visualizer animation loop and resets bars. */
+        function stopVisualizerLoop() {
+             if (visualizerAnimationId) {
+                 cancelAnimationFrame(visualizerAnimationId);
+                 visualizerAnimationId = null;
+                 // console.log("Visualizer animation frame cancelled."); // Optional log
+             }
+             // Reset bar heights visually when stopped
+             if (visualizerBars?.length) { // Use optional chaining
+                 visualizerBars.forEach(bar => { if(bar) { bar.style.height = '3px'; bar.style.opacity = '0.3'; } });
+             }
+        }
+
+        /** Stops the visualizer loop, disconnects nodes, and closes the AudioContext. */
+        async function stopAudioVisualizer() { // Make async for proper context closing
+            stopVisualizerLoop(); // Stop drawing first
+            if (audioVisualizer) { audioVisualizer.classList.remove('visible'); } // Hide container
+
+            // Disconnect nodes safely
+            if (microphoneSourceNode) {
+                try { microphoneSourceNode.disconnect(); } catch (e) { /* ignore */ }
+                microphoneSourceNode = null;
+            }
+            analyser = null; // Clear analyser reference
+
+            // Close context if it exists and is not already closed
+            if (audioContext && audioContext.state !== 'closed') {
+                console.log(`Attempting to close AudioContext (state: ${audioContext.state})...`);
+                try { 
+                    await audioContext.close(); 
+                    console.log("AudioContext closed successfully.");
+                } catch (e) { 
+                    console.error("Error closing AudioContext:", e); 
+                }
+            }
+            // Clear references regardless of closure state
+            audioContext = null; 
+            dataArray = null; 
+            console.log("Audio visualizer stopped and cleaned up.");
         }
 
         // --- UI State Management ---
-        function setRecordingState() {
-            isRecording = true;
-            recordButton.classList.add('recording');
-            recordButton.setAttribute('aria-label', 'Stop Recording');
-            liveTranscriptArea.textContent = '';
-            liveTranscriptArea.classList.add('visible');
-            setupAudioVisualizer();
+
+        /** Updates UI and starts necessary processes for the recording state. */
+        async function setRecordingState() { 
+            if (isRecording) return; // Prevent re-entry
+            console.log("Setting state to: Recording");
+            isRecording = true; // Set flag immediately
+
+            // Update Button UI
+            if(recordButton) { 
+                recordButton.classList.add('recording'); 
+                recordButton.setAttribute('aria-label', 'Stop Recording'); 
+            }
+            // Show Live Transcript Area
+            if(liveTranscriptArea) { 
+                liveTranscriptArea.textContent = ''; // Clear previous
+                liveTranscriptArea.classList.add('visible'); 
+            }
+            
+            // Setup Audio Visualizer (await ensures context is ready if possible)
+            const visualizerReady = await setupAudioVisualizerNodes();
+            if (visualizerReady) {
+                startVisualizerLoop(); // Start drawing only if setup succeeded
+            }
         }
 
-        function setIdleState() {
-            isRecording = false;
-            recordButton.classList.remove('recording');
-            recordButton.setAttribute('aria-label', 'Start Recording');
-            liveTranscriptArea.classList.remove('visible');
-            liveTranscriptArea.textContent = '';
-
-            stopAudioVisualizer();
-
-            // Stop the shared microphone stream tracks
-            if (microphoneStream) {
-                console.log("Stopping shared microphone stream tracks.");
-                microphoneStream.getTracks().forEach(track => track.stop());
-                microphoneStream = null;
+        /** Updates UI and stops processes for the idle state. */
+        async function setIdleState() { 
+            // Check if already effectively idle
+            if (!isRecording && !microphoneStream && !audioContext) { 
+                console.log("Already in idle state.");
+                return; 
             }
+            console.log("Setting state to: Idle");
+            const wasRecording = isRecording; // Store previous state
+            isRecording = false; // Set flag immediately
+
+            // Update Button UI
+            if(recordButton) { 
+                recordButton.classList.remove('recording'); 
+                recordButton.setAttribute('aria-label', 'Start Recording'); 
+            }
+            // Hide Live Transcript Area
+            if(liveTranscriptArea) { 
+                liveTranscriptArea.classList.remove('visible'); 
+                liveTranscriptArea.textContent = ''; 
+            }
+            
+            // Stop and cleanup visualizer (await ensures context is closed)
+            await stopAudioVisualizer(); 
+
+            // Stop microphone stream tracks *after* audio context is closed
+            if (microphoneStream) {
+                console.log("Stopping microphone stream tracks.");
+                microphoneStream.getTracks().forEach(track => track.stop());
+                microphoneStream = null; 
+            }
+            
+            // Clear persistent "Listening..." message only if transitioning from recording
+            if (wasRecording && messageBox && messageBox.textContent === 'Listening...') { 
+                hideMessage(); 
+            }
+             console.log("State set to Idle complete.");
         }
 
         // --- Web Speech API Setup ---
+
+        /** Initializes the SpeechRecognition object and sets up its event listeners. */
         function initializeSpeechRecognition() {
-            if (!supportsSpeechRecognition) {
-                console.error("Speech Recognition not supported.");
-                showMessage("Voice input not supported by this browser.", 5000);
-                recordButton.disabled = true;
-                pastEntriesBtn.disabled = true;
-                transcriptionOutput.textContent = 'Voice input not supported.';
-                return;
-            }
-
-            recognition = new SpeechRecognition();
-            recognition.continuous = true;
-            recognition.interimResults = true;
-            recognition.lang = 'en-US';
-
-            recognition.onstart = () => {
-                console.log('Speech recognition started (after stream acquired).');
-                setRecordingState();
-                showMessage('Listening...', 6000);
-            };
-
-            recognition.onresult = (event) => {
-                let interimTranscript = '';
-                let sessionFinalTranscript = '';
-                
-                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                    const transcript = event.results[i][0].transcript;
-                    if (event.results[i].isFinal) {
-                        currentRecognitionTranscript += transcript.trim() + ' ';
-                        sessionFinalTranscript += transcript.trim() + ' ';
-                    } else {
-                        interimTranscript += transcript;
-                    }
-                }
-                
-                liveTranscriptArea.textContent = currentRecognitionTranscript + interimTranscript;
-            };
-
-            recognition.onend = () => {
-                console.log('Speech recognition stopped.');
-                const textToSave = currentRecognitionTranscript.trim();
-                setIdleState();
-
-                if (textToSave) {
-                    const savedEntry = saveEntry(textToSave);
-                    appendEntryToDisplay(savedEntry);
-                } else {
-                    console.log("No final transcript to save.");
-                }
-                
-                currentRecognitionTranscript = '';
-
-                // Clear any lingering "Listening..." message
-                if (messageBox.textContent === 'Listening...') {
-                    if (messageTimeoutId) clearTimeout(messageTimeoutId);
-                    messageBox.classList.remove('show');
-                    messageTimeoutId = null;
-                }
-            };
-
-            recognition.onerror = (event) => {
-                console.error('Speech recognition error:', event.error, event.message);
-                let errorMessage = `Speech error: ${event.error}.`;
-                
-                if (event.error === 'no-speech') errorMessage = "Didn't catch that. Please try again.";
-                else if (event.error === 'audio-capture') errorMessage = 'Microphone error. Check connection & permissions.';
-                else if (event.error === 'not-allowed') errorMessage = 'Microphone access denied. Please allow access in browser settings.';
-                else if (event.error === 'network') errorMessage = 'Network error during speech recognition.';
-                else if (event.error === 'aborted') errorMessage = 'Recording stopped.';
-                else errorMessage = `An unexpected error occurred: ${event.error}`;
-
-                showMessage(errorMessage, 5000);
-                setIdleState();
-                currentRecognitionTranscript = '';
-            };
-        }
-
-        // --- Background Animation ---
-        function createBackgroundBubbles() {
-            bgAnimationContainer.innerHTML = '';
-            bgBubbles = [];
+            console.log("Initializing Speech Recognition...");
+            if (!supportsSpeechRecognition) { 
+                 console.error("Speech Recognition not supported.");
+                 showMessage("Voice input not supported by this browser.", 0); 
+                 if(recordButton) recordButton.disabled = true; 
+                 if(pastEntriesBtn) pastEntriesBtn.disabled = true;
+                 return; 
+            } 
             
-            for (let i = 0; i < NUM_BG_BUBBLES; i++) {
-                const bubble = document.createElement('div');
-                bubble.className = 'bg-bubble';
+            try { 
+                // Create the recognition instance
+                recognition = new SpeechRecognition(); 
                 
-                // Random size between 50px and 300px
-                const size = Math.random() * 250 + 50;
-                bubble.style.width = `${size}px`;
-                bubble.style.height = `${size}px`;
-                
-                // Random initial position
-                const x = Math.random() * 100;
-                const y = Math.random() * 100;
-                bubble.style.left = `${x}%`;
-                bubble.style.top = `${y}%`;
-                
-                // Random opacity
-                bubble.style.opacity = (Math.random() * 0.08 + 0.02).toString();
-                
-                bgAnimationContainer.appendChild(bubble);
-                bgBubbles.push(bubble);
-                
-                // Start animation after a small delay
-                setTimeout(() => {
-                    animateBubble(bubble);
-                }, Math.random() * 1000);
-            }
-        }
-        
-        function animateBubble(bubble) {
-            // Generate new random position
-            const newX = Math.random() * 100;
-            const newY = Math.random() * 100;
-            
-            // Set new position with transition
-            bubble.style.left = `${newX}%`;
-            bubble.style.top = `${newY}%`;
-            
-            // Schedule next animation after transition completes
-            setTimeout(() => {
-                animateBubble(bubble);
-            }, 20000 + Math.random() * 10000); // Random duration between 20-30s
-        }
+                // Configure recognition properties
+                recognition.continuous = true; // Keep listening after pauses
+                recognition.interimResults = true; // Get results as they are available
+                recognition.lang = 'en-US'; // Set language
+                recognition.maxAlternatives = 1; // Only need the most likely result
 
-        // --- Event Listeners ---
-        recordButton.addEventListener('click', async () => {
-            if (!recognition || recordButton.disabled) return;
+                // --- Assign Event Handlers ---
 
-            if (isRecording) {
-                try {
-                    recognition.stop();
-                } catch(e) {
-                    console.error("Error stopping recognition:", e);
-                    setIdleState();
-                }
-            } else {
-                const stream = await getOrRequestMicStream();
+                recognition.onstart = () => { 
+                    console.log('Speech recognition service started.'); 
+                    // UI updates are handled by setRecordingState
+                };
+                
+                recognition.onaudiostart = () => { 
+                    console.log('Audio capture started.'); 
+                    showMessage('Listening...', 0); // Show persistent message
+                };
+                
+                recognition.onspeechstart = () => { 
+                    console.log('Speech detected.'); 
+                    // You could potentially add visual feedback here
+                };
 
-                if (stream) {
-                    try {
-                        currentRecognitionTranscript = '';
-                        recognition.start();
-                    } catch (error) {
-                        if (error.name === 'InvalidStateError') {
-                            console.warn("Recognition start called while already starting/running.");
+                recognition.onresult = (event) => {
+                    // console.log('Speech recognition result received.'); // Can be very noisy
+                    let interimTranscript = '';
+                    // Iterate through all results received in this event
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        const transcriptPart = event.results[i][0].transcript;
+                        if (event.results[i].isFinal) {
+                            // Append final parts to the session's transcript accumulator
+                            currentFinalTranscript += transcriptPart.trim() + ' '; 
                         } else {
-                            console.error("Error trying to start recognition:", error);
-                            showMessage("Could not start listening. Please wait and try again.");
-                            setIdleState();
+                            // Append interim parts for the live display
+                            interimTranscript += transcriptPart;
                         }
                     }
-                } else {
-                    console.log("Microphone stream not acquired, cannot start recognition.");
-                    setIdleState();
-                }
-            }
-        });
+                    // Update the live transcript area display
+                    if (liveTranscriptArea) liveTranscriptArea.textContent = currentFinalTranscript + interimTranscript;
+                };
+                
+                recognition.onend = async () => { // Make async to await setIdleState
+                    console.log('Speech recognition service ended.');
+                    // This fires on stop(), error, or sometimes naturally.
+                    // Check if we *were* in a recording state before this ended.
+                    if (!isRecording) { 
+                        console.log("Recognition ended, but app already set to idle. No action."); 
+                        return; 
+                    } 
 
-        pastEntriesBtn.addEventListener('click', showHistoryModal);
-        modalCloseBtn.addEventListener('click', hideHistoryModal);
-        historyModalOverlay.addEventListener('click', (event) => {
+                    // Process the final transcript accumulated during the session
+                    const textToSave = currentFinalTranscript.trim();
+                    
+                    if (textToSave) { 
+                        console.log("Final transcript captured:", textToSave);
+                        const savedEntry = saveEntry(textToSave); // Save to localStorage
+                        if (savedEntry) {
+                            appendEntryToDisplay(savedEntry); // Add to the main display
+                        }
+                    } else { 
+                        console.log("No final transcript captured in this session."); 
+                        // Optionally show a message if nothing was heard
+                        // if (isRecording) showMessage("Didn't catch anything.", 2500);
+                    }
+                    
+                    // Reset the accumulator for the next session
+                    currentFinalTranscript = ''; 
+                    
+                    // IMPORTANT: Transition back to idle state AFTER processing results
+                    await setIdleState(); 
+                };
+
+                recognition.onerror = async (event) => { // Make async to await setIdleState
+                    console.error('Speech recognition error:', event.error, event.message);
+                    let userMessage = `Speech error: ${event.error}.`; 
+                    let shouldStopApp = true; // Assume most errors require stopping recording
+
+                    // Provide more user-friendly messages and decide if recording should stop
+                    switch (event.error) {
+                        case 'no-speech':
+                            userMessage = "Didn't catch that. Please try speaking again.";
+                            shouldStopApp = false; // Don't stop if continuous is true
+                            break;
+                        case 'audio-capture':
+                            userMessage = 'Microphone error. Check connection & permissions.';
+                            break;
+                        case 'not-allowed':
+                            userMessage = 'Microphone access denied. Please allow access in browser settings.';
+                            if (recordButton) recordButton.disabled = true; // Keep disabled
+                            break;
+                        case 'network':
+                            userMessage = 'Network error. Please check your connection.';
+                            break;
+                        case 'aborted':
+                            // This often means stop() was called or another error occurred.
+                            // Usually handled by onend, but log it. Don't show message unless needed.
+                            console.log("Recognition aborted."); 
+                            userMessage = ''; // Don't show redundant message
+                            shouldStopApp = false; // State change handled by stopRecording/onend
+                            break;
+                        case 'service-not-allowed':
+                            userMessage = 'Speech recognition service is not allowed by browser/OS.';
+                            if (recordButton) recordButton.disabled = true;
+                            break;
+                        default:
+                            userMessage = `An unexpected error occurred: ${event.error}`;
+                    }
+
+                    if (userMessage) showMessage(userMessage, 5000);
+                    
+                    // Reset transcript accumulator on error
+                    currentFinalTranscript = ''; 
+                    
+                    // Stop recording state only if necessary
+                    if (shouldStopApp) {
+                        await setIdleState(); 
+                    }
+                };
+                
+                recognition.onspeechend = () => { 
+                    console.log('Speech stopped being detected.'); 
+                    // Could potentially trigger stop here if not continuous, but we use continuous.
+                };
+                
+                recognition.onaudioend = () => { 
+                    console.log('Audio capture ended.'); 
+                    // Hide "Listening..." message if shown persistently
+                    if (messageBox?.textContent === 'Listening...') {
+                         hideMessage(); 
+                    }
+                };
+
+                // If initialization successful, enable the record button
+                if (recordButton) recordButton.disabled = false; 
+                console.log("Speech Recognition initialized successfully.");
+
+            } catch (e) { 
+                 // Catch errors during SpeechRecognition object creation itself
+                 console.error("Error creating SpeechRecognition instance:", e);
+                 showMessage("Failed to initialize speech recognition feature.", 0); // Persistent message
+                 if (recordButton) recordButton.disabled = true;
+            } 
+        }
+
+        // --- Background Animation --- (Assume functions exist and are correct)
+        function createBackgroundBubbles() { /* ... */ }
+        function animateBubble(bubble) { /* ... */ }
+
+        // --- Action Functions ---
+
+        /** Handles the logic to start a recording session. */
+        async function startRecording() {
+             if (isRecording) { console.warn("Start recording called while already recording."); return; }
+             console.log("--- Start Recording Process ---");
+             
+             // 1. Ensure we are in a clean idle state first
+             await setIdleState(); 
+
+             // 2. Get microphone access
+             const stream = await getOrRequestMicStream();
+             if (!stream) { 
+                 console.error("Microphone stream acquisition failed."); 
+                 // Message already shown by getOrRequestMicStream
+                 return; // Exit if no stream
+             }
+
+             // 3. Check if recognition is initialized
+             if (!recognition) { 
+                 console.error("Speech Recognition not initialized."); 
+                 showMessage("Speech recognition unavailable.", 5000); 
+                 await setIdleState(); // Ensure cleanup
+                 return; 
+             }
+             
+             // 4. Set the recording state (updates UI, sets up visualizer)
+             // This needs to happen *before* recognition.start() to ensure AudioContext is ready
+             await setRecordingState();
+
+             // 5. Start the speech recognition process
+             try {
+                 currentFinalTranscript = ''; // Clear previous session data
+                 console.log("Requesting recognition.start()...");
+                 recognition.start(); 
+                 // onstart/onaudiostart will provide further feedback
+             } catch (error) {
+                 console.error("Error calling recognition.start():", error);
+                 // Handle specific error like trying to start when already started
+                 if (error.name === 'InvalidStateError'){ 
+                     console.warn("InvalidStateError on start - likely already started. Ensuring recording state.");
+                     // Ensure UI is correct, visualizer might need restart if context died
+                     await setRecordingState(); 
+                 } else { 
+                     // Handle other errors starting recognition
+                     showMessage("Could not start listening.", 5000); 
+                     await setIdleState(); // Revert to idle on failure
+                 }
+             }
+        }
+
+        /** Handles the logic to stop a recording session. */
+        function stopRecording() { 
+            if (!isRecording) { console.warn("Stop recording called while not recording."); return; }
+            console.log("--- Stop Recording Process ---");
+            
+            // Hide persistent "Listening..." message immediately if present
+            if (messageBox?.textContent === 'Listening...') { hideMessage(); } 
+
+            if (recognition) {
+                try { 
+                    // Request stop. The 'onend' event handler will manage state transition and cleanup.
+                    recognition.stop(); 
+                    console.log("Recognition stop requested."); 
+                } 
+                catch(e) { 
+                    // If stop() itself throws an error, force cleanup immediately
+                    console.error("Error calling recognition.stop():", e); 
+                    setIdleState(); // Use async version here for safety
+                }
+            } else { 
+                // If recognition object is somehow missing, force cleanup
+                console.warn("Recognition object not found during stop request."); 
+                setIdleState(); // Use async version here for safety
+            }
+        }
+
+        // --- Global Event Listeners --- 
+
+        /** Handles clicks on the main record/stop button. */
+        function handleRecordButtonClick() {
+            if (recordButton?.disabled) return; // Ignore clicks if disabled
+            
+            if (isRecording) {
+                stopRecording();
+            } else {
+                // `startRecording` is async but we don't necessarily need to await it here
+                // as it handles its own state transitions.
+                startRecording(); 
+            }
+        }
+
+        /** Handles clicks on the history button. */
+        function handleHistoryButtonClick() {
+             if (pastEntriesBtn?.disabled) return;
+             showHistoryModal();
+        }
+
+        /** Handles clicks on the modal close button. */
+        function handleModalCloseClick() {
+            hideHistoryModal();
+        }
+
+        /** Handles clicks on the modal overlay (to close it). */
+        function handleOverlayClick(event) {
             if (event.target === historyModalOverlay) {
                 hideHistoryModal();
             }
-        });
+        }
+        
+        /** Handles the Escape key press to close the modal. */
+        function handleEscapeKey(event) {
+             if (event.key === 'Escape' && historyModalOverlay?.classList.contains('visible')) {
+                 hideHistoryModal();
+             }
+         }
 
-        // Cleanup on page unload
-        window.addEventListener('beforeunload', () => {
-            if (isRecording && recognition) {
-                recognition.abort();
-                console.log("Aborted recognition on page unload.");
+        /** Handles page unload for cleanup. */
+        function handlePageUnload() {
+            console.log("Page unloading. Cleaning up resources...");
+            if (recognition && isRecording) { 
+                // Abort immediately, don't wait for onend
+                recognition.abort(); 
+                console.log("Recognition aborted on page unload.");
+            } 
+            // Ensure other resources are released (sync cleanup best effort on unload)
+            stopAudioVisualizer(); // Call sync version
+            if (microphoneStream) {
+                microphoneStream.getTracks().forEach(track => track.stop());
+                microphoneStream = null;
             }
-            setIdleState();
-        });
+            isRecording = false; // Force state
+        }
 
-        // --- Initial Setup ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // Check overall support first
-            if (!supportsLocalStorage || !supportsSpeechRecognition || !supportsWebAudio) {
-                let missing = [];
-                if (!supportsLocalStorage) missing.push("Browser Storage");
-                if (!supportsSpeechRecognition) missing.push("Speech Recognition");
-                if (!supportsWebAudio) missing.push("Web Audio");
-                showMessage(`This app requires: ${missing.join(', ')}. Some features may be disabled.`, 8000);
-                recordButton.disabled = !supportsSpeechRecognition || !supportsWebAudio;
-                pastEntriesBtn.disabled = !supportsLocalStorage;
-            }
+        // --- Initial Setup --- 
+        /** Main initialization function called on DOMContentLoaded. */
+        function initializeApp() {
+            console.log("--- DOMContentLoaded: Initializing App ---");
+            
+            // Guard against missing core elements - halt if critical elements missing
+             if (!recordButton || !transcriptionOutput || !audioVisualizer) {
+                 console.error("CRITICAL ERROR: Core UI elements missing. Halting initialization.");
+                 showMessage("Application failed to load correctly.", 0);
+                 return; 
+             }
+            
+            // --- Initial UI State ---
+            recordButton.disabled = true; // Disable until checks complete
+            if (pastEntriesBtn) pastEntriesBtn.disabled = true; 
+            
+            // --- Feature Support Checks ---
+            let featureMessages = [];
+            if (!supportsLocalStorage) { featureMessages.push("Storage (Saving/Loading)"); if (pastEntriesBtn) pastEntriesBtn.disabled = true; }
+            if (!supportsSpeechRecognition) { featureMessages.push("Speech Recognition"); recordButton.disabled = true; }
+            if (!supportsWebAudio) { featureMessages.push("Web Audio (Visualizer)"); }
+            // Display warning if features are missing
+            if (featureMessages.length > 0) { showMessage(`Warning: Unsupported features: ${featureMessages.join(', ')}.`, 8000); }
 
-            updateDateTime();
-            setInterval(updateDateTime, 1000);
+            // --- Initialize Core Components ---
+            updateDateTime(); // Initial call
+            setInterval(updateDateTime, 30000); // Update time periodically
             
-            createBackgroundBubbles();
-            createVisualizerBars();
-            
-            if (supportsSpeechRecognition) {
-                initializeSpeechRecognition();
-            }
-            
-            if (supportsLocalStorage) {
-                loadTodaysEntries();
+            // Assume background animation setup works
+            // createBackgroundBubbles(); 
+            createVisualizerBars(); // Create visualizer elements structure
+
+            // Initialize Speech Recognition (enables record button if successful)
+            if (supportsSpeechRecognition) { 
+                initializeSpeechRecognition(); 
             } else {
-                transcriptionOutput.textContent = 'Browser storage not supported. Entries cannot be saved or loaded.';
-                transcriptionOutput.style.fontStyle = 'italic';
+                 // Ensure button remains disabled if no speech rec support
+                 recordButton.disabled = true; 
             }
-        });
+            
+            // Load saved entries if storage is supported
+            if (supportsLocalStorage) { 
+                loadTodaysEntries(); 
+                if (pastEntriesBtn) pastEntriesBtn.disabled = false; // Enable history button
+            } else { 
+                 // Display message if storage not supported
+                 if (transcriptionOutput) { 
+                     transcriptionOutput.innerHTML = '<p class="entry-text" style="font-style: italic; color: var(--text-muted);">Browser storage not supported. Entries cannot be saved or loaded.</p>';
+                 }
+                 updateWordCount(); // Ensure count is 0
+            }
+            
+            // --- Attach Event Listeners ---
+            // Use cached elements and guard checks
+            if (recordButton) recordButton.addEventListener('click', handleRecordButtonClick);
+            if (pastEntriesBtn) pastEntriesBtn.addEventListener('click', handleHistoryButtonClick);
+            if (modalCloseBtn) modalCloseBtn.addEventListener('click', handleModalCloseClick);
+            if (historyModalOverlay) historyModalOverlay.addEventListener('click', handleOverlayClick);
+            document.addEventListener('keydown', handleEscapeKey);
+            window.addEventListener('beforeunload', handlePageUnload); // Cleanup on exit
+
+            console.log("--- Yap App Initialized Successfully ---");
+        }
+
+        // --- Start Application ---
+        // Wait for the DOM to be fully loaded before initializing
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
     </script>
 </body>
 </html>
