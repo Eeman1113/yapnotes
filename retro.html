@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Speech Recorder with Themes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Pixel Speech Recorder with Themes</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,7 +30,7 @@
             --theme-error-text: #ffffff;
             --theme-grid-border: rgba(160, 160, 192, 0.35);
 
-            --grid-square-size: 30px;
+            --grid-square-size: 25px; /* Slightly smaller grid squares */
         }
 
         /* Theme: Forest */
@@ -132,13 +131,14 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 1rem;
+            padding: 0.5rem; /* Reduced padding for mobile */
             image-rendering: pixelated;
             -webkit-font-smoothing: none;
             -moz-osx-font-smoothing: grayscale;
-            overflow: hidden;
+            overflow-x: hidden; /* Prevent horizontal scroll */
             position: relative;
             transition: background-color 0.5s ease;
+            font-size: 14px; /* Slightly smaller base font for mobile */
         }
 
         /* --- Background Grid Animation --- */
@@ -178,9 +178,9 @@
         /* --- Tape Recorder Body --- */
         .tape-recorder {
             background-color: var(--theme-ui-bg);
-            padding: 20px;
-            width: 100%;
-            max-width: 420px;
+            padding: 15px; /* Reduced padding */
+            width: 100%; /* Take full width available */
+            max-width: 420px; /* Limit max width on larger screens */
             text-align: center;
             border: 4px solid var(--theme-ui-border);
             box-shadow: inset 0 0 0 4px var(--theme-inset-bg), 0 8px 0 var(--theme-ui-shadow);
@@ -204,8 +204,8 @@
         /* --- Reel Container --- */
         .reel-container {
             background-color: var(--theme-inset-bg);
-            padding: 15px;
-            margin-bottom: 20px;
+            padding: 10px; /* Reduced padding */
+            margin-bottom: 15px; /* Reduced margin */
             display: flex;
             justify-content: space-around;
             align-items: center;
@@ -216,10 +216,10 @@
 
         /* --- Reel Styling --- */
         .reel {
-            width: 60px;
-            height: 60px;
+            width: 50px; /* Slightly smaller reels */
+            height: 50px;
             background-color: var(--theme-highlight);
-            border: 4px solid var(--theme-ui-border);
+            border: 3px solid var(--theme-ui-border); /* Thinner border */
             border-radius: 50%;
             position: relative;
             display: flex;
@@ -230,21 +230,21 @@
         }
         .reel::before { /* Inner hole */
             content: '';
-            width: 16px;
-            height: 16px;
+            width: 12px; /* Smaller hole */
+            height: 12px;
             background-color: var(--theme-inset-bg);
-            border: 4px solid var(--theme-ui-border);
+            border: 3px solid var(--theme-ui-border); /* Thinner border */
             border-radius: 50%;
             transition: background-color 0.5s ease, border-color 0.5s ease;
         }
         .reel::after { /* Spoke */
             content: '';
             position: absolute;
-            width: 4px;
+            width: 3px; /* Thinner spoke */
             height: 70%;
             background-color: var(--theme-ui-border);
             top: 15%;
-            left: calc(50% - 2px);
+            left: calc(50% - 1.5px); /* Adjusted position */
              image-rendering: pixelated;
              transition: background-color 0.5s ease;
         }
@@ -263,11 +263,11 @@
         #status {
             color: var(--theme-text);
             background-color: var(--theme-ui-bg);
-            padding: 8px 12px;
+            padding: 6px 10px; /* Adjusted padding */
             margin-bottom: 15px;
             display: inline-block;
-            font-size: 0.8em;
-            border: 4px solid var(--theme-ui-border);
+            font-size: 0.75em; /* Adjusted size */
+            border: 3px solid var(--theme-ui-border); /* Thinner border */
             box-shadow: inset 0 0 0 2px var(--theme-inset-bg);
             text-transform: uppercase;
             transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, color 0.5s ease;
@@ -281,18 +281,18 @@
 
         /* --- Transcript Area --- */
         #transcript {
-            width: calc(100% - 8px);
-            min-height: 90px;
-            border: 4px solid var(--theme-ui-border);
-            box-shadow: inset 0 0 0 4px var(--theme-ui-bg);
-            padding: 10px;
-            margin-bottom: 20px;
+            width: calc(100% - 6px); /* Adjusted for thinner border */
+            min-height: 80px; /* Adjusted height */
+            border: 3px solid var(--theme-ui-border); /* Thinner border */
+            box-shadow: inset 0 0 0 3px var(--theme-ui-bg); /* Adjusted shadow */
+            padding: 8px; /* Adjusted padding */
+            margin-bottom: 15px; /* Adjusted margin */
             font-family: 'Press Start 2P', cursive;
-            font-size: 0.75em;
+            font-size: 0.7em; /* Adjusted size */
             color: var(--theme-text);
             background-color: var(--theme-inset-bg);
             resize: none;
-            line-height: 1.5;
+            line-height: 1.6; /* Increased for readability */
             image-rendering: pixelated;
             box-sizing: border-box;
             transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, color 0.5s ease;
@@ -309,39 +309,42 @@
         /* --- Control Buttons --- */
         .controls {
              display: flex;
+             flex-wrap: wrap; /* Allow buttons to wrap on small screens */
              justify-content: center;
-             gap: 15px;
+             gap: 10px; /* Reduced gap */
              margin-bottom: 10px;
         }
         .control-button {
             font-family: 'Press Start 2P', cursive;
-            font-size: 0.8em;
-            padding: 12px 18px;
+            font-size: 0.75em; /* Adjusted size */
+            padding: 10px 15px; /* Adjusted padding */
             cursor: pointer;
             transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
             color: var(--theme-text);
             text-transform: uppercase;
-            border: 4px solid var(--theme-ui-border);
+            border: 3px solid var(--theme-ui-border); /* Thinner border */
             position: relative;
-            box-shadow: 0 6px 0 var(--theme-ui-shadow);
-            margin-bottom: 6px;
+            box-shadow: 0 5px 0 var(--theme-ui-shadow); /* Adjusted shadow */
+            margin-bottom: 5px; /* Adjusted margin */
+            flex-grow: 1; /* Allow buttons to grow slightly */
+            min-width: 70px; /* Ensure minimum tap size */
         }
         .control-button:active:not(:disabled) {
-            transform: translateY(4px);
+            transform: translateY(3px); /* Adjusted press down */
             box-shadow: 0 2px 0 var(--theme-ui-shadow);
         }
         .control-button:disabled {
             cursor: not-allowed;
             opacity: 0.6;
-            box-shadow: 0 6px 0 color-mix(in srgb, var(--theme-ui-shadow) 50%, transparent);
+            box-shadow: 0 5px 0 color-mix(in srgb, var(--theme-ui-shadow) 50%, transparent);
         }
         .control-button::before {
              content: '';
              position: absolute;
-             top: -4px;
-             left: -4px;
-             right: -4px;
-             height: 4px;
+             top: -3px; /* Adjusted for thinner border */
+             left: -3px;
+             right: -3px;
+             height: 3px;
              background-color: var(--theme-highlight);
              transition: background-color 0.5s ease;
         }
@@ -375,25 +378,26 @@
         .theme-selector {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
+            flex-wrap: wrap; /* Allow wrapping */
+            gap: 8px; /* Reduced gap */
+            margin-top: 15px; /* Adjusted margin */
             z-index: 2;
             position: relative;
         }
         .theme-button {
-            width: 24px;
-            height: 24px;
+            width: 20px; /* Smaller buttons */
+            height: 20px;
             cursor: pointer;
-            border: 4px solid var(--theme-ui-border);
-            box-shadow: 0 4px 0 var(--theme-ui-shadow);
-            margin-bottom: 4px;
+            border: 3px solid var(--theme-ui-border); /* Thinner border */
+            box-shadow: 0 3px 0 var(--theme-ui-shadow); /* Adjusted shadow */
+            margin-bottom: 3px; /* Adjusted margin */
             transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.5s ease;
              background-size: cover;
         }
-        .theme-button:hover { transform: translateY(-2px); }
+        .theme-button:hover { transform: translateY(-1px); }
         .theme-button.active {
              border-color: var(--theme-text);
-             transform: translateY(2px);
+             transform: translateY(1px);
              box-shadow: 0 2px 0 var(--theme-ui-shadow);
         }
 
@@ -407,27 +411,27 @@
         /* --- Message Box --- */
         #messageBox {
             position: fixed;
-            bottom: 20px;
+            bottom: 15px; /* Adjusted position */
             left: 50%;
             transform: translateX(-50%);
             background-color: var(--theme-ui-border);
             color: var(--theme-text-light);
-            padding: 15px 25px;
+            padding: 12px 20px; /* Adjusted padding */
             display: none;
             z-index: 1000;
-            font-size: 0.7em;
+            font-size: 0.65em; /* Adjusted size */
             text-align: center;
             max-width: 90%;
-             border: 4px solid var(--theme-ui-shadow);
-             box-shadow: inset 0 0 0 4px var(--theme-inset-bg), 0 4px 0 var(--theme-ui-shadow);
-             margin-bottom: 4px;
+             border: 3px solid var(--theme-ui-shadow); /* Thinner border */
+             box-shadow: inset 0 0 0 3px var(--theme-inset-bg), 0 3px 0 var(--theme-ui-shadow); /* Adjusted shadow */
+             margin-bottom: 3px; /* Adjusted margin */
              transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, color 0.5s ease;
         }
         #messageBox.error {
              background-color: var(--theme-error-bg);
              color: var(--theme-error-text);
              border-color: var(--theme-error-border);
-             box-shadow: inset 0 0 0 4px color-mix(in srgb, var(--theme-error-bg) 80%, black), 0 4px 0 var(--theme-error-shadow);
+             box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--theme-error-bg) 80%, black), 0 3px 0 var(--theme-error-shadow);
         }
 
         /* --- History Modal --- */
@@ -444,6 +448,7 @@
             transition: opacity 0.3s ease, visibility 0s linear 0.3s;
             backdrop-filter: blur(3px);
             -webkit-backdrop-filter: blur(3px);
+            padding: 0.5rem; /* Add padding for small screens */
         }
         .modal-overlay.visible {
             opacity: 1;
@@ -454,10 +459,10 @@
             background-color: var(--theme-ui-bg);
             border: 4px solid var(--theme-ui-border);
             box-shadow: inset 0 0 0 4px var(--theme-inset-bg), 0 8px 0 var(--theme-ui-shadow);
-            padding: 20px;
-            width: 90%;
+            padding: 15px; /* Reduced padding */
+            width: 100%; /* Full width on mobile */
             max-width: 500px;
-            max-height: 75vh;
+            max-height: 80vh; /* Limit height relative to viewport */
             display: flex;
             flex-direction: column;
             position: relative;
@@ -471,20 +476,20 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 4px solid var(--theme-ui-border); /* Pixel border bottom */
+            margin-bottom: 10px; /* Reduced margin */
+            padding-bottom: 8px; /* Reduced padding */
+            border-bottom: 3px solid var(--theme-ui-border); /* Thinner border */
              transition: border-color 0.5s ease;
         }
         .modal-title {
-            font-size: 1em; /* Match button font size */
+            font-size: 0.9em; /* Adjusted size */
             color: var(--theme-text);
             text-transform: uppercase;
              transition: color 0.5s ease;
         }
         .modal-close-button {
             font-family: 'Press Start 2P', cursive;
-            font-size: 1.2em; /* Slightly larger */
+            font-size: 1.1em; /* Adjusted size */
             background: none;
             border: none;
             color: var(--theme-text);
@@ -499,27 +504,26 @@
             overflow-y: auto;
             flex-grow: 1;
             text-align: left;
-             /* Increased font size for readability */
-             font-size: 0.8em;
-             line-height: 1.7; /* Slightly increased line height */
+             font-size: 0.75em; /* Adjusted size */
+             line-height: 1.7;
              color: var(--theme-text);
              transition: color 0.5s ease;
         }
-        .history-entry { margin-bottom: 18px; } /* Increased spacing */
+        .history-entry { margin-bottom: 15px; }
         .history-entry-date {
-            font-size: 1.1em; /* Keep date slightly larger */
+            font-size: 1.0em; /* Adjusted size */
             color: var(--theme-text);
-            margin-bottom: 10px; /* More space below date */
-            padding-bottom: 5px;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
             border-bottom: 2px solid var(--theme-ui-border);
             display: block;
              transition: color 0.5s ease, border-color 0.5s ease;
         }
-        .history-entry-item { margin-bottom: 10px; } /* Increased spacing */
+        .history-entry-item { margin-bottom: 8px; }
         .history-entry-time {
             opacity: 0.7;
-            margin-right: 0.7em; /* More space after time */
-            font-size: 0.9em; /* Slightly smaller time */
+            margin-right: 0.7em;
+            font-size: 0.9em;
         }
         .history-entry-text {
             white-space: pre-wrap;
@@ -538,6 +542,34 @@
         .modal-body::-webkit-scrollbar-track { background: var(--theme-inset-bg); border: 2px solid var(--theme-ui-border); transition: background-color 0.5s ease, border-color 0.5s ease; }
         .modal-body::-webkit-scrollbar-thumb { background: var(--theme-ui-border); border: 2px solid var(--theme-inset-bg); transition: background-color 0.5s ease, border-color 0.5s ease;}
         .modal-body::-webkit-scrollbar-thumb:hover { background: var(--theme-highlight); }
+
+        /* Media Query for larger screens (optional adjustments) */
+        @media (min-width: 640px) {
+            body {
+                font-size: 16px; /* Restore default font size */
+                 padding: 1rem; /* Restore padding */
+            }
+            .tape-recorder {
+                 padding: 20px; /* Restore padding */
+            }
+             .reel-container { padding: 15px; margin-bottom: 20px;}
+             .reel { width: 60px; height: 60px; border-width: 4px;}
+             .reel::before { width: 16px; height: 16px; border-width: 4px;}
+             .reel::after { width: 4px; left: calc(50% - 2px);}
+             #status { font-size: 0.8em; padding: 8px 12px; border-width: 4px;}
+             #transcript { font-size: 0.75em; min-height: 90px; padding: 10px; border-width: 4px; box-shadow: inset 0 0 0 4px var(--theme-ui-bg);}
+             .controls { flex-wrap: nowrap; } /* Prevent wrapping on larger screens */
+             .control-button { font-size: 0.8em; padding: 12px 18px; border-width: 4px; box-shadow: 0 6px 0 var(--theme-ui-shadow); margin-bottom: 6px;}
+             .control-button::before { top: -4px; left: -4px; right: -4px; height: 4px;}
+             .theme-selector { gap: 10px; margin-top: 20px;}
+             .theme-button { width: 24px; height: 24px; border-width: 4px; box-shadow: 0 4px 0 var(--theme-ui-shadow); margin-bottom: 4px;}
+             #messageBox { font-size: 0.7em; padding: 15px 25px; border-width: 4px; box-shadow: inset 0 0 0 4px var(--theme-inset-bg), 0 4px 0 var(--theme-ui-shadow); margin-bottom: 4px;}
+             .modal-content { padding: 20px;}
+             .modal-header { margin-bottom: 15px; padding-bottom: 10px; border-bottom-width: 4px;}
+             .modal-title { font-size: 1em;}
+             .modal-close-button { font-size: 1.2em;}
+             .modal-body { font-size: 0.8em;}
+        }
 
     </style>
 </head>
@@ -804,11 +836,8 @@
                     if (textToSave) {
                         console.log("Final transcript captured:", textToSave);
                         saveEntry(textToSave); // Save to localStorage
-                        // Note: We don't re-display saved entries here, only current session
                     } else {
                         console.log("No final transcript captured.");
-                        // Optionally show a message if nothing was heard and we were recording
-                        // showMessage("Didn't catch anything.", 2000);
                     }
                     currentFinalTranscript = ''; // Reset accumulator for the next session
                     setIdleState(); // Transition UI back to idle state
@@ -1020,8 +1049,6 @@
                 localStorage.setItem(currentThemeKey, themeClass);
             } catch (e) {
                 console.warn("Could not save theme preference to localStorage:", e);
-                // Optionally inform user if storage fails, but might be too noisy
-                // showMessage("Could not save theme preference.", 2000);
             }
             console.log("Applied theme:", themeClass);
         }
