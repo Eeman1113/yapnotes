@@ -29,8 +29,7 @@
             --theme-error-border: #d87070;
             --theme-error-shadow: #d87070;
             --theme-error-text: #ffffff;
-            /* Adjusted grid border opacity for 1px width */
-            --theme-grid-border: rgba(160, 160, 192, 0.35); /* Slightly higher alpha */
+            --theme-grid-border: rgba(160, 160, 192, 0.35);
 
             --grid-square-size: 30px;
         }
@@ -54,7 +53,7 @@
             --theme-error-border: #8b0000;
             --theme-error-shadow: #8b0000;
             --theme-error-text: #ffffff;
-            --theme-grid-border: rgba(113, 128, 103, 0.4); /* Slightly higher alpha */
+            --theme-grid-border: rgba(113, 128, 103, 0.4);
         }
 
         /* Theme: Ocean */
@@ -76,7 +75,7 @@
             --theme-error-border: #dc143c;
             --theme-error-shadow: #dc143c;
             --theme-error-text: #ffffff;
-            --theme-grid-border: rgba(99, 136, 143, 0.4); /* Slightly higher alpha */
+            --theme-grid-border: rgba(99, 136, 143, 0.4);
         }
 
         /* Theme: Sunset */
@@ -98,7 +97,7 @@
             --theme-error-border: #d32f2f;
             --theme-error-shadow: #d32f2f;
             --theme-error-text: #ffffff;
-            --theme-grid-border: rgba(200, 100, 64, 0.4); /* Slightly higher alpha */
+            --theme-grid-border: rgba(200, 100, 64, 0.4);
         }
 
          /* Theme: Night */
@@ -120,7 +119,7 @@
             --theme-error-border: #a03024;
             --theme-error-shadow: #a03024;
             --theme-error-text: #ffffff;
-            --theme-grid-border: rgba(127, 140, 141, 0.4); /* Use highlight color alpha */
+            --theme-grid-border: rgba(127, 140, 141, 0.4);
         }
 
 
@@ -161,15 +160,12 @@
             width: var(--grid-square-size);
             height: var(--grid-square-size);
             background-color: transparent;
-            /* Thinner border */
-            border: 1px solid var(--theme-grid-border);
+            border: 1px solid var(--theme-grid-border); /* Thinner border */
             box-sizing: border-box;
             animation: light-up-calm 20s infinite;
-            /* Delay set by JS */
             transition: border-color 0.5s ease;
         }
 
-        /* Calmer Animation using theme accents */
         @keyframes light-up-calm {
             0%, 100% { background-color: transparent; opacity: 1; }
             5% { background-color: var(--theme-accent2); opacity: 0.4; }
@@ -481,14 +477,14 @@
              transition: border-color 0.5s ease;
         }
         .modal-title {
-            font-size: 1em;
+            font-size: 1em; /* Match button font size */
             color: var(--theme-text);
             text-transform: uppercase;
              transition: color 0.5s ease;
         }
         .modal-close-button {
             font-family: 'Press Start 2P', cursive;
-            font-size: 1.2em;
+            font-size: 1.2em; /* Slightly larger */
             background: none;
             border: none;
             color: var(--theme-text);
@@ -503,24 +499,31 @@
             overflow-y: auto;
             flex-grow: 1;
             text-align: left;
-             font-size: 0.7em;
-             line-height: 1.6;
+             /* Increased font size for readability */
+             font-size: 0.8em;
+             line-height: 1.7; /* Slightly increased line height */
              color: var(--theme-text);
              transition: color 0.5s ease;
         }
-        .history-entry { margin-bottom: 15px; }
+        .history-entry { margin-bottom: 18px; } /* Increased spacing */
         .history-entry-date {
-            font-size: 1.1em;
+            font-size: 1.1em; /* Keep date slightly larger */
             color: var(--theme-text);
-            margin-bottom: 8px;
-            padding-bottom: 4px;
+            margin-bottom: 10px; /* More space below date */
+            padding-bottom: 5px;
             border-bottom: 2px solid var(--theme-ui-border);
             display: block;
              transition: color 0.5s ease, border-color 0.5s ease;
         }
-        .history-entry-item { margin-bottom: 8px; }
-        .history-entry-time { opacity: 0.7; margin-right: 0.5em; }
-        .history-entry-text { white-space: pre-wrap; }
+        .history-entry-item { margin-bottom: 10px; } /* Increased spacing */
+        .history-entry-time {
+            opacity: 0.7;
+            margin-right: 0.7em; /* More space after time */
+            font-size: 0.9em; /* Slightly smaller time */
+        }
+        .history-entry-text {
+            white-space: pre-wrap;
+        }
         .modal-body:empty::before {
             content: "NO PAST ENTRIES...";
             color: var(--theme-text);
@@ -588,6 +591,7 @@
         const PIXEL_ENTRIES_KEY = 'pixelRecorderEntries'; // Storage key
 
         // --- DOM Elements (Cached) ---
+        // Cache frequently accessed elements for performance
         const recordButton = document.getElementById('recordButton');
         const stopButton = document.getElementById('stopButton');
         const historyButton = document.getElementById('historyButton');
@@ -605,8 +609,8 @@
         // --- State Variables ---
         let isRecording = false;
         let recognition = null;
-        let currentFinalTranscript = '';
-        let messageTimeoutId = null;
+        let currentFinalTranscript = ''; // Accumulates final transcript for the current session
+        let messageTimeoutId = null; // ID for the message box timeout
 
         // --- Feature Support Checks ---
         const supportsLocalStorage = typeof Storage !== "undefined";
@@ -621,14 +625,16 @@
          * @param {boolean} [isError=false] - Apply error styling.
          */
         function showMessage(message, duration = 3000, isError = false) {
-            if (!messageBox) return;
-            console.log(`APP_MESSAGE: ${message}`);
+            if (!messageBox) return; // Ensure element exists
+            console.log(`APP_MESSAGE: ${message}`); // Log for debugging
             messageBox.textContent = message;
-            messageBox.style.display = 'block';
-            // Add 'error' class based on parameter or content
+            messageBox.style.display = 'block'; // Make visible
+            // Add 'error' class based on parameter or content for styling
             messageBox.className = isError || message.toLowerCase().includes('error') || message.toLowerCase().includes('denied') ? 'error' : '';
 
+            // Clear previous timeout if exists
             if (messageTimeoutId) clearTimeout(messageTimeoutId);
+            // Set new timeout if duration is positive
             if (duration > 0) {
                 messageTimeoutId = setTimeout(hideMessage, duration);
             }
@@ -636,82 +642,92 @@
 
         /** Hides the message box. */
         function hideMessage() {
-             if (!messageBox) return;
-             if (messageTimeoutId) clearTimeout(messageTimeoutId);
-             messageBox.style.display = 'none';
+             if (!messageBox) return; // Ensure element exists
+             if (messageTimeoutId) clearTimeout(messageTimeoutId); // Clear timeout
+             messageBox.style.display = 'none'; // Hide element
              messageBox.className = ''; // Clear error class
-             messageTimeoutId = null;
+             messageTimeoutId = null; // Reset timeout ID
         }
 
         // --- Local Storage Functions ---
         /** Retrieves all stored entries. Returns empty object on failure. */
         function getStoredEntries() {
-            if (!supportsLocalStorage) return {};
+            if (!supportsLocalStorage) return {}; // Check support
             try {
                 const stored = localStorage.getItem(PIXEL_ENTRIES_KEY);
+                // Basic validation before parsing
                 if (stored && stored.length > 2 && stored.startsWith('{') && stored.endsWith('}')) {
                     const parsed = JSON.parse(stored);
+                    // Ensure it's a non-null object
                     return (typeof parsed === 'object' && parsed !== null) ? parsed : {};
                 }
-                return {};
+                return {}; // Return empty if stored is null, empty, or not object-like
             } catch (e) {
                 console.error("Error reading entries from localStorage:", e);
-                showMessage("Error loading past entries.", 4000, true); // Mark as error
-                return {};
+                showMessage("Error loading past entries.", 4000, true); // Show error message
+                return {}; // Return empty on error
             }
         }
 
         /** Saves a new transcription entry. Returns entry object or null. */
         function saveEntry(text) {
-            if (!supportsLocalStorage) {
+            if (!supportsLocalStorage) { // Check support
                 showMessage("Cannot save: Browser storage not supported.", 4000, true);
                 return null;
             }
-            const trimmedText = text.trim();
-            if (!trimmedText) {
+            const trimmedText = text.trim(); // Remove leading/trailing whitespace
+            if (!trimmedText) { // Don't save empty entries
                 console.log("Attempted to save empty entry. Skipping.");
                 return null;
             }
             try {
-                const allEntries = getStoredEntries();
-                const today = new Date().toISOString().split('T')[0];
+                const allEntries = getStoredEntries(); // Get current data
+                const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
                 const now = new Date();
-                const currentTime = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                const currentTime = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }); // Format time
+
+                // Create the new entry object
                 const newEntry = {
-                    timestamp: now.getTime(),
+                    timestamp: now.getTime(), // Store timestamp for reliable sorting
                     time: currentTime,
                     text: trimmedText
                 };
+
+                // Initialize array for the day if it doesn't exist
                 if (!Array.isArray(allEntries[today])) {
                     allEntries[today] = [];
                 }
+                // Add the new entry
                 allEntries[today].push(newEntry);
+                // Save back to localStorage
                 localStorage.setItem(PIXEL_ENTRIES_KEY, JSON.stringify(allEntries));
                 console.log("Entry saved successfully:", newEntry);
-                return newEntry;
+                return newEntry; // Return the saved entry
             } catch (e) {
                 console.error("Error saving entry to localStorage:", e);
+                // Handle specific errors like quota exceeded
                 if (e.name === 'QuotaExceededError' || e.message.includes('quota')) {
                     showMessage("Storage full. Cannot save new entry.", 5000, true);
                 } else {
                     showMessage("Error saving entry.", 5000, true);
                 }
-                return null;
+                return null; // Indicate saving failed
             }
         }
 
         // --- UI State Management ---
         /** Updates UI for the recording state. */
         function setRecordingState() {
-            if (isRecording) return;
+            if (isRecording) return; // Prevent redundant calls
             console.log("Setting state to: Recording");
             isRecording = true;
-            if(recordButton) recordButton.disabled = false; // Can stop
-            if(stopButton) stopButton.disabled = false; // Enable stop
+            // Enable/disable buttons appropriately
+            if(recordButton) recordButton.disabled = false; // Allow stopping
+            if(stopButton) stopButton.disabled = false; // Enable stop button
             if(historyButton) historyButton.disabled = true; // Disable history while recording
             if(recordButton) recordButton.setAttribute('aria-label', 'Stop Recording');
             if(statusDiv) statusDiv.textContent = 'Recording';
-            if(tapeRecorderDiv) tapeRecorderDiv.classList.add('recording'); // Trigger animation
+            if(tapeRecorderDiv) tapeRecorderDiv.classList.add('recording'); // Trigger reel animation
         }
 
         /** Updates UI for the idle state. */
@@ -723,13 +739,14 @@
             }
             console.log("Setting state to: Idle");
             isRecording = false;
-            if(recordButton) recordButton.disabled = false; // Can record
-            if(stopButton) stopButton.disabled = true; // Disable stop
+            // Enable/disable buttons appropriately
+            if(recordButton) recordButton.disabled = false; // Allow starting
+            if(stopButton) stopButton.disabled = true; // Disable stop button
             if(historyButton) historyButton.disabled = !supportsLocalStorage; // Re-enable history if supported
             if(recordButton) recordButton.setAttribute('aria-label', 'Start Recording');
             if(statusDiv) statusDiv.textContent = 'Stopped';
-            if(tapeRecorderDiv) tapeRecorderDiv.classList.remove('recording'); // Stop animation
-            // Clear persistent "Listening..." message
+            if(tapeRecorderDiv) tapeRecorderDiv.classList.remove('recording'); // Stop reel animation
+            // Clear persistent "Listening..." message if it's showing
             if (messageBox && messageBox.textContent === 'Listening...') { hideMessage(); }
              console.log("State set to Idle complete.");
         }
@@ -738,70 +755,97 @@
         /** Initializes the SpeechRecognition object. */
         function initializeSpeechRecognition() {
             console.log("Initializing Speech Recognition...");
-            if (!supportsSpeechRecognition) {
+            if (!supportsSpeechRecognition) { // Check support first
                 console.error("Speech Recognition not supported.");
-                showMessage("Voice input not supported.", 0, true);
-                if(recordButton) recordButton.disabled = true;
+                showMessage("Voice input not supported.", 0, true); // Persistent error
+                if(recordButton) recordButton.disabled = true; // Disable record button permanently
                 return;
             }
             try {
                 recognition = new SpeechRecognition();
-                recognition.continuous = true;
-                recognition.interimResults = true;
-                recognition.lang = 'en-US';
-                recognition.maxAlternatives = 1;
+                // Configure recognition
+                recognition.continuous = true; // Keep listening even after pauses
+                recognition.interimResults = true; // Get results as they come
+                recognition.lang = 'en-US'; // Set language
+                recognition.maxAlternatives = 1; // We only need the most likely transcript
 
-                recognition.onstart = () => { console.log('Speech recognition service started.'); };
-                recognition.onaudiostart = () => { console.log('Audio capture started.'); showMessage('Listening...', 0); };
+                // --- Event Handlers ---
+                recognition.onstart = () => { console.log('Speech recognition service started.'); /* UI handled by setRecordingState */ };
+                recognition.onaudiostart = () => { console.log('Audio capture started.'); showMessage('Listening...', 0); }; // Persistent listening message
                 recognition.onspeechstart = () => { console.log('Speech detected.'); };
 
                 recognition.onresult = (event) => {
                     let interimTranscript = '';
+                    // Process results received in this event
                     for (let i = event.resultIndex; i < event.results.length; ++i) {
                         const transcriptPart = event.results[i][0].transcript;
-                        if (event.results[i].isFinal) { currentFinalTranscript += transcriptPart.trim() + ' '; }
-                        else { interimTranscript += transcriptPart; }
+                        if (event.results[i].isFinal) {
+                            // Append final parts to the session accumulator
+                            currentFinalTranscript += transcriptPart.trim() + ' ';
+                        } else {
+                            // Append interim parts for live display
+                            interimTranscript += transcriptPart;
+                        }
                     }
+                    // Update the main transcript area display
                     if (transcriptArea) {
-                        transcriptArea.value = (currentFinalTranscript + interimTranscript).toUpperCase();
+                        transcriptArea.value = (currentFinalTranscript + interimTranscript).toUpperCase(); // Keep uppercase for pixel style
+                        // Auto-scroll to bottom
                         transcriptArea.scrollTop = transcriptArea.scrollHeight;
                     }
                 };
+
                 recognition.onend = () => {
                     console.log('Speech recognition service ended.');
+                    // Only process if we were actually recording before this event
                     if (!isRecording) { console.log("Recognition ended, but app already set to idle."); return; }
-                    const textToSave = currentFinalTranscript.trim();
-                    if (textToSave) { console.log("Final transcript captured:", textToSave); saveEntry(textToSave); }
-                    else { console.log("No final transcript captured."); }
-                    currentFinalTranscript = '';
-                    setIdleState(); // Transition back to idle
+
+                    const textToSave = currentFinalTranscript.trim(); // Get final text for this session
+                    if (textToSave) {
+                        console.log("Final transcript captured:", textToSave);
+                        saveEntry(textToSave); // Save to localStorage
+                        // Note: We don't re-display saved entries here, only current session
+                    } else {
+                        console.log("No final transcript captured.");
+                        // Optionally show a message if nothing was heard and we were recording
+                        // showMessage("Didn't catch anything.", 2000);
+                    }
+                    currentFinalTranscript = ''; // Reset accumulator for the next session
+                    setIdleState(); // Transition UI back to idle state
                 };
+
                 recognition.onerror = (event) => {
                     console.error('Speech recognition error:', event.error, event.message);
-                    let userMessage = `ERROR: ${event.error}`;
-                    let shouldStopApp = true;
+                    let userMessage = `ERROR: ${event.error}`; // Default error
+                    let shouldStopApp = true; // Assume most errors require stopping
+
+                    // Provide more user-friendly messages
                     switch (event.error) {
-                        case 'no-speech': userMessage = "NO SPEECH..."; shouldStopApp = false; break;
+                        case 'no-speech': userMessage = "NO SPEECH..."; shouldStopApp = false; break; // Don't stop if continuous
                         case 'audio-capture': userMessage = 'MIC ERR!'; break;
-                        case 'not-allowed': userMessage = 'MIC DENIED!'; if (recordButton) recordButton.disabled = true; break;
+                        case 'not-allowed': userMessage = 'MIC DENIED!'; if (recordButton) recordButton.disabled = true; break; // Keep disabled
                         case 'network': userMessage = 'NETWORK ERR!'; break;
-                        case 'aborted': console.log("Recognition aborted."); userMessage = ''; shouldStopApp = false; break;
-                        case 'service-not-allowed': userMessage = 'SERVICE N/A!'; if (recordButton) recordButton.disabled = true; break;
+                        case 'aborted': console.log("Recognition aborted."); userMessage = ''; shouldStopApp = false; break; // Usually handled by onend
+                        case 'service-not-allowed': userMessage = 'SERVICE N/A!'; if (recordButton) recordButton.disabled = true; break; // Keep disabled
                         default: userMessage = `ERR: ${event.error}`;
                     }
-                    if (userMessage) showMessage(userMessage, 5000, true); // Mark as error
+                    if (userMessage) showMessage(userMessage, 5000, true); // Show error message
                     currentFinalTranscript = ''; // Reset accumulator on error
+
+                    // Stop recording state only if necessary
                     if (shouldStopApp) { setIdleState(); }
                 };
-                 recognition.onspeechend = () => { console.log('Speech stopped being detected.'); };
-                 recognition.onaudioend = () => { console.log('Audio capture ended.'); if (messageBox?.textContent === 'Listening...') { hideMessage(); } };
 
-                if (recordButton) recordButton.disabled = false; // Enable button on successful init
+                 recognition.onspeechend = () => { console.log('Speech stopped being detected.'); };
+                 recognition.onaudioend = () => { console.log('Audio capture ended.'); if (messageBox?.textContent === 'Listening...') { hideMessage(); } }; // Hide persistent message
+
+                if (recordButton) recordButton.disabled = false; // Enable record button on successful initialization
                 console.log("Speech Recognition initialized successfully.");
             } catch (e) {
+                // Catch errors during SpeechRecognition object creation
                 console.error("Error creating SpeechRecognition instance:", e);
-                showMessage("Failed to init speech feature.", 0, true);
-                if (recordButton) recordButton.disabled = true;
+                showMessage("Failed to init speech feature.", 0, true); // Persistent error
+                if (recordButton) recordButton.disabled = true; // Keep disabled
             }
         }
 
@@ -818,16 +862,16 @@
                 currentFinalTranscript = ''; // Clear previous session data
                 if (transcriptArea) transcriptArea.value = ''; // Clear display area
                 console.log("Requesting recognition.start()...");
-                recognition.start();
+                recognition.start(); // Start listening
             } catch (error) {
                 console.error("Error calling recognition.start():", error);
                 if (error.name === 'InvalidStateError'){
                     console.warn("InvalidStateError on start - likely already started.");
-                    // Ensure UI state is correct, might have been interrupted
+                    // Ensure UI state is correct if interrupted
                     setRecordingState();
                 } else {
                     showMessage("Could not start listening.", 5000, true);
-                    setIdleState(); // Revert to idle on failure
+                    setIdleState(); // Revert to idle on other start failures
                 }
             }
         }
@@ -835,11 +879,11 @@
         function stopRecording() {
             if (!isRecording) { console.warn("Stop called while not recording."); return; }
             console.log("--- Stop Recording Process ---");
-            if (messageBox?.textContent === 'Listening...') { hideMessage(); } // Hide listening message immediately
+            if (messageBox?.textContent === 'Listening...') { hideMessage(); } // Hide listening message
 
             if (recognition) {
                 try {
-                    // Request stop. 'onend' handles state transition & saving.
+                    // Request stop. 'onend' handler will process results and call setIdleState.
                     recognition.stop();
                     console.log("Recognition stop requested.");
                 }
@@ -873,6 +917,8 @@
                      console.log("No history entries to display.");
                 } else {
                     console.log(`Loading history for ${sortedDates.length} dates.`);
+                    // Use DocumentFragment for performance when adding multiple entries
+                    const fragment = document.createDocumentFragment();
                     sortedDates.forEach((date) => {
                         const entriesForDate = Array.isArray(allEntries[date]) ? allEntries[date] : [];
                         // Sort entries within the date by timestamp (oldest first within date)
@@ -882,16 +928,19 @@
                         let displayDate = "Invalid Date";
                         try {
                             const dateParts = date.split('-');
-                            const entryDate = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
-                            if (!isNaN(entryDate.getTime())) {
-                                displayDate = entryDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+                            // Ensure parts are valid numbers before creating Date object
+                            if (dateParts.length === 3 && !isNaN(parseInt(dateParts[0])) && !isNaN(parseInt(dateParts[1])) && !isNaN(parseInt(dateParts[2]))) {
+                                const entryDate = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
+                                if (!isNaN(entryDate.getTime())) {
+                                    displayDate = entryDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+                                }
                             }
                         } catch (e) { console.warn("Error parsing date in history:", date, e); }
 
                         const dateHeading = document.createElement('h3');
                         dateHeading.className = 'history-entry-date';
                         dateHeading.textContent = displayDate;
-                        historyModalBody.appendChild(dateHeading);
+                        fragment.appendChild(dateHeading); // Add heading to fragment
 
                         // Display entries for this date
                         entriesForDate.forEach((entry) => {
@@ -907,12 +956,13 @@
                                 textSpan.textContent = entry.text; // Display normal case in history
                                 itemDiv.appendChild(timeSpan);
                                 itemDiv.appendChild(textSpan);
-                                historyModalBody.appendChild(itemDiv);
+                                fragment.appendChild(itemDiv); // Add entry item to fragment
                             } else {
                                 console.warn("Skipping invalid history entry structure:", entry);
                             }
                         });
                     });
+                    historyModalBody.appendChild(fragment); // Append all entries at once
                 }
                 // Make the modal visible
                 historyModalOverlay.classList.add('visible');
@@ -927,18 +977,24 @@
         }
 
         // --- Global Event Listeners ---
+        /** Handles clicks on the main record/stop button. */
         function handleRecordButtonClick() {
-            if (recordButton?.disabled) return;
+            if (recordButton?.disabled) return; // Check if button exists and is enabled
             if (isRecording) { stopRecording(); }
             else { startRecording(); }
         }
+        /** Handles clicks on the history button. */
         function handleHistoryButtonClick() {
-            if (historyButton?.disabled) return;
+            if (historyButton?.disabled) return; // Check if button exists and is enabled
             showHistoryModal();
         }
+        /** Handles clicks on the modal close button. */
         function handleModalCloseClick() { hideHistoryModal(); }
+        /** Handles clicks on the modal overlay (to close it). */
         function handleOverlayClick(event) { if (event.target === historyModalOverlay) { hideHistoryModal(); } }
+        /** Handles the Escape key press to close the modal. */
         function handleEscapeKey(event) { if (event.key === 'Escape' && historyModalOverlay?.classList.contains('visible')) { hideHistoryModal(); } }
+        /** Handles page unload for cleanup. */
         function handlePageUnload() {
             console.log("Page unloading. Cleaning up...");
             if (recognition && isRecording) {
@@ -949,23 +1005,29 @@
         }
 
         // --- Theme Switching Logic ---
+        /** Applies the selected theme class to the body and updates button states. */
         function applyTheme(themeClass) {
             if (!body || !themeButtons) return; // Guard check
             body.className = ''; // Clear all classes first
             body.classList.add(themeClass); // Add the new theme class
+            // Update active state for theme buttons
             themeButtons.forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.theme === themeClass);
             });
-            // Use try-catch for localStorage access
+            // Save theme preference to localStorage, handling potential errors
+            const currentThemeKey = 'pixelRecorderTheme'; // Define key locally
             try {
                 localStorage.setItem(currentThemeKey, themeClass);
             } catch (e) {
                 console.warn("Could not save theme preference to localStorage:", e);
+                // Optionally inform user if storage fails, but might be too noisy
+                // showMessage("Could not save theme preference.", 2000);
             }
             console.log("Applied theme:", themeClass);
         }
 
         // --- Background Grid Creation ---
+        /** Creates the background grid squares. */
         function createGrid() {
             if (!gridContainer) return; // Guard check
             gridContainer.innerHTML = ''; // Clear existing grid
@@ -990,14 +1052,14 @@
         }
 
         // --- Initial Setup ---
+        /** Main initialization function called after DOM is loaded. */
         function initializeApp() {
             console.log("--- DOMContentLoaded: Initializing App ---");
              // Check for essential elements
-             const essentialElements = [recordButton, stopButton, transcriptArea, statusDiv, tapeRecorderDiv, messageBox, historyButton, historyModalOverlay, modalCloseBtn, gridContainer, body];
-             if (essentialElements.some(el => !el)) {
+             const essentialElements = [recordButton, stopButton, transcriptArea, statusDiv, tapeRecorderDiv, messageBox, historyButton, historyModalOverlay, modalCloseBtn, gridContainer, body, themeButtons];
+             if (essentialElements.some(el => !el || (el instanceof NodeList && el.length === 0))) { // Check NodeList length too
                  console.error("CRITICAL ERROR: Core UI elements missing. Halting initialization.");
-                 // Use alert as a last resort if messageBox might be missing
-                 alert("Application failed to load correctly. Essential elements are missing.");
+                 alert("Application failed to load correctly. Essential elements are missing."); // Use alert as a last resort
                  return;
              }
 
@@ -1043,7 +1105,12 @@
             // Theme button listeners
             themeButtons.forEach(button => {
                  button.addEventListener('click', () => {
-                     applyTheme(button.dataset.theme);
+                    // Check dataset before calling applyTheme
+                    if (button.dataset && button.dataset.theme) {
+                        applyTheme(button.dataset.theme);
+                    } else {
+                        console.warn("Theme button clicked without a data-theme attribute:", button);
+                    }
                  });
              });
 
