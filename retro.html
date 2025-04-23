@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Speech Recorder with Themes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* --- Base Styles & Theme Variables --- */
+        :root {
+            /* Default Theme: Pastel */
+            --theme-bg: #c0c0e0;
+            --theme-ui-bg: #e0e0f0;
+            --theme-ui-border: #a0a0c0;
+            --theme-ui-shadow: #8a8aaf;
+            --theme-highlight: #f0f0ff;
+            --theme-inset-bg: #c0c0e0;
+            --theme-inset-border: #b0b0d0;
+            --theme-text: #6a6a8a;
+            --theme-text-light: #ffffff;
+            --theme-accent1: #ffc0cb;
+            --theme-accent2: #add8e6;
+            --theme-accent3: #c1e1c1;
+            --theme-accent4: #fffacd;
+            --theme-error-bg: #f08080;
+            --theme-error-border: #d87070;
+            --theme-error-shadow: #d87070;
+            --theme-error-text: #ffffff;
+            /* Adjusted grid border opacity for 1px width */
+            --theme-grid-border: rgba(160, 160, 192, 0.35); /* Slightly higher alpha */
+
+            --grid-square-size: 30px;
+        }
+
+        /* Theme: Forest */
+        body.theme-forest {
+            --theme-bg: #a1b597;
+            --theme-ui-bg: #c1cec0;
+            --theme-ui-border: #718067;
+            --theme-ui-shadow: #5f6e5a;
+            --theme-highlight: #e1eac0;
+            --theme-inset-bg: #a1b597;
+            --theme-inset-border: #91a587;
+            --theme-text: #4d4033;
+            --theme-text-light: #f0f5e6;
+            --theme-accent1: #d2b48c;
+            --theme-accent2: #8fbc8f;
+            --theme-accent3: #90ee90;
+            --theme-accent4: #f5f5dc;
+            --theme-error-bg: #cd5c5c;
+            --theme-error-border: #8b0000;
+            --theme-error-shadow: #8b0000;
+            --theme-error-text: #ffffff;
+            --theme-grid-border: rgba(113, 128, 103, 0.4); /* Slightly higher alpha */
+        }
+
+        /* Theme: Ocean */
+        body.theme-ocean {
+            --theme-bg: #b0e0e6;
+            --theme-ui-bg: #d4f0f0;
+            --theme-ui-border: #63888f;
+            --theme-ui-shadow: #527178;
+            --theme-highlight: #e0ffff;
+            --theme-inset-bg: #b0e0e6;
+            --theme-inset-border: #a0d0d6;
+            --theme-text: #005073;
+            --theme-text-light: #ffffff;
+            --theme-accent1: #f0e68c;
+            --theme-accent2: #98d8e0;
+            --theme-accent3: #7fffd4;
+            --theme-accent4: #ffffff;
+            --theme-error-bg: #ff6347;
+            --theme-error-border: #dc143c;
+            --theme-error-shadow: #dc143c;
+            --theme-error-text: #ffffff;
+            --theme-grid-border: rgba(99, 136, 143, 0.4); /* Slightly higher alpha */
+        }
+
+        /* Theme: Sunset */
+        body.theme-sunset {
+            --theme-bg: #ffccbc;
+            --theme-ui-bg: #ffe0b2;
+            --theme-ui-border: #c86440;
+            --theme-ui-shadow: #b05030;
+            --theme-highlight: #fff3e0;
+            --theme-inset-bg: #ffccbc;
+            --theme-inset-border: #ffb7a0;
+            --theme-text: #795548;
+            --theme-text-light: #ffffff;
+            --theme-accent1: #ff8a65;
+            --theme-accent2: #ba68c8;
+            --theme-accent3: #f06292;
+            --theme-accent4: #fff176;
+            --theme-error-bg: #e57373;
+            --theme-error-border: #d32f2f;
+            --theme-error-shadow: #d32f2f;
+            --theme-error-text: #ffffff;
+            --theme-grid-border: rgba(200, 100, 64, 0.4); /* Slightly higher alpha */
+        }
+
+         /* Theme: Night */
+        body.theme-night {
+            --theme-bg: #2c3e50;
+            --theme-ui-bg: #34495e;
+            --theme-ui-border: #1a252f;
+            --theme-ui-shadow: #111a21;
+            --theme-highlight: #7f8c8d;
+            --theme-inset-bg: #2c3e50;
+            --theme-inset-border: #233140;
+            --theme-text: #ecf0f1;
+            --theme-text-light: #ffffff;
+            --theme-accent1: #f1c40f;
+            --theme-accent2: #9b59b6;
+            --theme-accent3: #3498db;
+            --theme-accent4: #e74c3c;
+            --theme-error-bg: #c0392b;
+            --theme-error-border: #a03024;
+            --theme-error-shadow: #a03024;
+            --theme-error-text: #ffffff;
+            --theme-grid-border: rgba(127, 140, 141, 0.4); /* Use highlight color alpha */
+        }
+
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background-color: var(--theme-bg);
+            color: var(--theme-text);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+            image-rendering: pixelated;
+            -webkit-font-smoothing: none;
+            -moz-osx-font-smoothing: grayscale;
+            overflow: hidden;
+            position: relative;
+            transition: background-color 0.5s ease;
+        }
+
+        /* --- Background Grid Animation --- */
+        #background-grid {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, var(--grid-square-size));
+            grid-template-rows: repeat(auto-fill, var(--grid-square-size));
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.8;
+            transition: opacity 0.5s ease;
+        }
+
+        .grid-square {
+            width: var(--grid-square-size);
+            height: var(--grid-square-size);
+            background-color: transparent;
+            /* Thinner border */
+            border: 1px solid var(--theme-grid-border);
+            box-sizing: border-box;
+            animation: light-up-calm 20s infinite;
+            /* Delay set by JS */
+            transition: border-color 0.5s ease;
+        }
+
+        /* Calmer Animation using theme accents */
+        @keyframes light-up-calm {
+            0%, 100% { background-color: transparent; opacity: 1; }
+            5% { background-color: var(--theme-accent2); opacity: 0.4; }
+            15% { background-color: transparent; opacity: 1; }
+            50% { background-color: var(--theme-accent3); opacity: 0.4; }
+            60% { background-color: transparent; opacity: 1; }
+        }
+
+
+        /* --- Tape Recorder Body --- */
+        .tape-recorder {
+            background-color: var(--theme-ui-bg);
+            padding: 20px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            border: 4px solid var(--theme-ui-border);
+            box-shadow: inset 0 0 0 4px var(--theme-inset-bg), 0 8px 0 var(--theme-ui-shadow);
+            position: relative;
+            margin-bottom: 8px;
+            z-index: 1;
+            transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+        }
+         .tape-recorder::before {
+             content: '';
+             position: absolute;
+             top: -4px;
+             left: -4px;
+             right: -4px;
+             height: 4px;
+             background-color: var(--theme-highlight);
+             transition: background-color 0.5s ease;
+         }
+
+
+        /* --- Reel Container --- */
+        .reel-container {
+            background-color: var(--theme-inset-bg);
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border: 4px solid var(--theme-ui-border);
+            box-shadow: inset 0 0 0 4px var(--theme-inset-border);
+             transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        /* --- Reel Styling --- */
+        .reel {
+            width: 60px;
+            height: 60px;
+            background-color: var(--theme-highlight);
+            border: 4px solid var(--theme-ui-border);
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: none;
+             transition: background-color 0.5s ease, border-color 0.5s ease;
+        }
+        .reel::before { /* Inner hole */
+            content: '';
+            width: 16px;
+            height: 16px;
+            background-color: var(--theme-inset-bg);
+            border: 4px solid var(--theme-ui-border);
+            border-radius: 50%;
+            transition: background-color 0.5s ease, border-color 0.5s ease;
+        }
+        .reel::after { /* Spoke */
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 70%;
+            background-color: var(--theme-ui-border);
+            top: 15%;
+            left: calc(50% - 2px);
+             image-rendering: pixelated;
+             transition: background-color 0.5s ease;
+        }
+
+
+        /* --- Reel Animation --- */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .tape-recorder.recording .reel {
+            animation: spin 1.2s steps(8, end) infinite;
+        }
+
+        /* --- Status Indicator --- */
+        #status {
+            color: var(--theme-text);
+            background-color: var(--theme-ui-bg);
+            padding: 8px 12px;
+            margin-bottom: 15px;
+            display: inline-block;
+            font-size: 0.8em;
+            border: 4px solid var(--theme-ui-border);
+            box-shadow: inset 0 0 0 2px var(--theme-inset-bg);
+            text-transform: uppercase;
+            transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, color 0.5s ease;
+        }
+        .tape-recorder.recording #status {
+             color: var(--theme-accent1);
+             animation: blink-status 1s steps(2, start) infinite;
+        }
+        @keyframes blink-status { to { visibility: hidden; } }
+
+
+        /* --- Transcript Area --- */
+        #transcript {
+            width: calc(100% - 8px);
+            min-height: 90px;
+            border: 4px solid var(--theme-ui-border);
+            box-shadow: inset 0 0 0 4px var(--theme-ui-bg);
+            padding: 10px;
+            margin-bottom: 20px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.75em;
+            color: var(--theme-text);
+            background-color: var(--theme-inset-bg);
+            resize: none;
+            line-height: 1.5;
+            image-rendering: pixelated;
+            box-sizing: border-box;
+            transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, color 0.5s ease;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+        #transcript::placeholder {
+            color: var(--theme-text);
+            opacity: 0.6;
+            transition: color 0.5s ease, opacity 0.5s ease;
+        }
+
+
+        /* --- Control Buttons --- */
+        .controls {
+             display: flex;
+             justify-content: center;
+             gap: 15px;
+             margin-bottom: 10px;
+        }
+        .control-button {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8em;
+            padding: 12px 18px;
+            cursor: pointer;
+            transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
+            color: var(--theme-text);
+            text-transform: uppercase;
+            border: 4px solid var(--theme-ui-border);
+            position: relative;
+            box-shadow: 0 6px 0 var(--theme-ui-shadow);
+            margin-bottom: 6px;
+        }
+        .control-button:active:not(:disabled) {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 var(--theme-ui-shadow);
+        }
+        .control-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+            box-shadow: 0 6px 0 color-mix(in srgb, var(--theme-ui-shadow) 50%, transparent);
+        }
+        .control-button::before {
+             content: '';
+             position: absolute;
+             top: -4px;
+             left: -4px;
+             right: -4px;
+             height: 4px;
+             background-color: var(--theme-highlight);
+             transition: background-color 0.5s ease;
+        }
+
+        .record-button { background-color: var(--theme-accent1); }
+        .record-button:hover:not(:disabled) { filter: brightness(1.1); }
+        .record-button:disabled {
+             background-color: color-mix(in srgb, var(--theme-accent1) 30%, var(--theme-ui-bg));
+             color: color-mix(in srgb, var(--theme-text) 50%, var(--theme-ui-bg));
+        }
+         .record-button:disabled::before { background-color: var(--theme-ui-bg); }
+
+        .stop-button { background-color: var(--theme-accent2); }
+         .stop-button:hover:not(:disabled) { filter: brightness(1.1); }
+         .stop-button:disabled {
+             background-color: color-mix(in srgb, var(--theme-accent2) 30%, var(--theme-ui-bg));
+             color: color-mix(in srgb, var(--theme-text) 50%, var(--theme-ui-bg));
+         }
+          .stop-button:disabled::before { background-color: var(--theme-ui-bg); }
+
+        .history-button { background-color: var(--theme-accent4); }
+        .history-button:hover:not(:disabled) { filter: brightness(1.1); }
+        .history-button:disabled {
+            background-color: color-mix(in srgb, var(--theme-accent4) 30%, var(--theme-ui-bg));
+            color: color-mix(in srgb, var(--theme-text) 50%, var(--theme-ui-bg));
+        }
+        .history-button:disabled::before { background-color: var(--theme-ui-bg); }
+
+
+        /* --- Theme Selector --- */
+        .theme-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            z-index: 2;
+            position: relative;
+        }
+        .theme-button {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            border: 4px solid var(--theme-ui-border);
+            box-shadow: 0 4px 0 var(--theme-ui-shadow);
+            margin-bottom: 4px;
+            transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.5s ease;
+             background-size: cover;
+        }
+        .theme-button:hover { transform: translateY(-2px); }
+        .theme-button.active {
+             border-color: var(--theme-text);
+             transform: translateY(2px);
+             box-shadow: 0 2px 0 var(--theme-ui-shadow);
+        }
+
+        #theme-pastel { background-image: linear-gradient(135deg, #f0f0ff, #c0c0e0); }
+        #theme-forest { background-image: linear-gradient(135deg, #e1eac0, #a1b597); }
+        #theme-ocean { background-image: linear-gradient(135deg, #e0ffff, #b0e0e6); }
+        #theme-sunset { background-image: linear-gradient(135deg, #fff3e0, #ffccbc); }
+        #theme-night { background-image: linear-gradient(135deg, #7f8c8d, #2c3e50); }
+
+
+        /* --- Message Box --- */
+        #messageBox {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--theme-ui-border);
+            color: var(--theme-text-light);
+            padding: 15px 25px;
+            display: none;
+            z-index: 1000;
+            font-size: 0.7em;
+            text-align: center;
+            max-width: 90%;
+             border: 4px solid var(--theme-ui-shadow);
+             box-shadow: inset 0 0 0 4px var(--theme-inset-bg), 0 4px 0 var(--theme-ui-shadow);
+             margin-bottom: 4px;
+             transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, color 0.5s ease;
+        }
+        #messageBox.error {
+             background-color: var(--theme-error-bg);
+             color: var(--theme-error-text);
+             border-color: var(--theme-error-border);
+             box-shadow: inset 0 0 0 4px color-mix(in srgb, var(--theme-error-bg) 80%, black), 0 4px 0 var(--theme-error-shadow);
+        }
+
+        /* --- History Modal --- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+        }
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.3s ease, visibility 0s linear 0s;
+        }
+        .modal-content {
+            background-color: var(--theme-ui-bg);
+            border: 4px solid var(--theme-ui-border);
+            box-shadow: inset 0 0 0 4px var(--theme-inset-bg), 0 8px 0 var(--theme-ui-shadow);
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 75vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transform: scale(0.95);
+            transition: transform 0.3s ease, background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+        }
+        .modal-overlay.visible .modal-content {
+            transform: scale(1);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 4px solid var(--theme-ui-border); /* Pixel border bottom */
+             transition: border-color 0.5s ease;
+        }
+        .modal-title {
+            font-size: 1em;
+            color: var(--theme-text);
+            text-transform: uppercase;
+             transition: color 0.5s ease;
+        }
+        .modal-close-button {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.2em;
+            background: none;
+            border: none;
+            color: var(--theme-text);
+            cursor: pointer;
+            padding: 0 5px;
+            line-height: 1;
+            opacity: 0.7;
+            transition: opacity 0.2s ease, color 0.5s ease;
+        }
+        .modal-close-button:hover { opacity: 1; }
+        .modal-body {
+            overflow-y: auto;
+            flex-grow: 1;
+            text-align: left;
+             font-size: 0.7em;
+             line-height: 1.6;
+             color: var(--theme-text);
+             transition: color 0.5s ease;
+        }
+        .history-entry { margin-bottom: 15px; }
+        .history-entry-date {
+            font-size: 1.1em;
+            color: var(--theme-text);
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 2px solid var(--theme-ui-border);
+            display: block;
+             transition: color 0.5s ease, border-color 0.5s ease;
+        }
+        .history-entry-item { margin-bottom: 8px; }
+        .history-entry-time { opacity: 0.7; margin-right: 0.5em; }
+        .history-entry-text { white-space: pre-wrap; }
+        .modal-body:empty::before {
+            content: "NO PAST ENTRIES...";
+            color: var(--theme-text);
+            opacity: 0.6;
+            display: block;
+            text-align: center;
+            padding-top: 20px;
+             transition: color 0.5s ease, opacity 0.5s ease;
+        }
+        /* Custom scrollbar for modal */
+        .modal-body::-webkit-scrollbar { width: 8px; }
+        .modal-body::-webkit-scrollbar-track { background: var(--theme-inset-bg); border: 2px solid var(--theme-ui-border); transition: background-color 0.5s ease, border-color 0.5s ease; }
+        .modal-body::-webkit-scrollbar-thumb { background: var(--theme-ui-border); border: 2px solid var(--theme-inset-bg); transition: background-color 0.5s ease, border-color 0.5s ease;}
+        .modal-body::-webkit-scrollbar-thumb:hover { background: var(--theme-highlight); }
+
+    </style>
+</head>
+<body class="theme-pastel"> <div id="background-grid"></div>
+
+    <div id="messageBox"></div>
+
+    <div class="tape-recorder">
+        <div id="status">Stopped</div>
+
+        <div class="reel-container">
+            <div class="reel"></div> <div class="reel"></div> </div>
+
+        <textarea id="transcript" readonly placeholder="SPEAK..."></textarea>
+
+        <div class="controls">
+            <button id="recordButton" class="control-button record-button" aria-label="Start Recording" disabled>
+                Rec
+            </button>
+            <button id="stopButton" class="control-button stop-button" aria-label="Stop Recording" disabled>
+                Stop
+            </button>
+             <button id="historyButton" class="control-button history-button" aria-label="View History" disabled>
+                Hist
+            </button>
+        </div>
+    </div>
+
+     <div class="theme-selector">
+        <button class="theme-button" id="theme-pastel" data-theme="theme-pastel" aria-label="Pastel Theme"></button>
+        <button class="theme-button" id="theme-forest" data-theme="theme-forest" aria-label="Forest Theme"></button>
+        <button class="theme-button" id="theme-ocean" data-theme="theme-ocean" aria-label="Ocean Theme"></button>
+        <button class="theme-button" id="theme-sunset" data-theme="theme-sunset" aria-label="Sunset Theme"></button>
+        <button class="theme-button" id="theme-night" data-theme="theme-night" aria-label="Night Theme"></button>
+    </div>
+
+    <div class="modal-overlay" id="history-modal-overlay">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modal-title">History</h2>
+                <button class="modal-close-button" id="modal-close-btn" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body" id="history-modal-body">
+                </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- Constants ---
+        const PIXEL_ENTRIES_KEY = 'pixelRecorderEntries'; // Storage key
+
+        // --- DOM Elements (Cached) ---
+        const recordButton = document.getElementById('recordButton');
+        const stopButton = document.getElementById('stopButton');
+        const historyButton = document.getElementById('historyButton');
+        const transcriptArea = document.getElementById('transcript');
+        const statusDiv = document.getElementById('status');
+        const tapeRecorderDiv = document.querySelector('.tape-recorder');
+        const messageBox = document.getElementById('messageBox');
+        const themeButtons = document.querySelectorAll('.theme-button');
+        const body = document.body;
+        const gridContainer = document.getElementById('background-grid');
+        const historyModalOverlay = document.getElementById('history-modal-overlay');
+        const historyModalBody = document.getElementById('history-modal-body');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
+        // --- State Variables ---
+        let isRecording = false;
+        let recognition = null;
+        let currentFinalTranscript = '';
+        let messageTimeoutId = null;
+
+        // --- Feature Support Checks ---
+        const supportsLocalStorage = typeof Storage !== "undefined";
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const supportsSpeechRecognition = !!SpeechRecognition;
+
+        // --- Utility Functions ---
+        /**
+         * Displays a message to the user.
+         * @param {string} message - The message text.
+         * @param {number} [duration=3000] - Duration in ms. 0 = persistent.
+         * @param {boolean} [isError=false] - Apply error styling.
+         */
+        function showMessage(message, duration = 3000, isError = false) {
+            if (!messageBox) return;
+            console.log(`APP_MESSAGE: ${message}`);
+            messageBox.textContent = message;
+            messageBox.style.display = 'block';
+            // Add 'error' class based on parameter or content
+            messageBox.className = isError || message.toLowerCase().includes('error') || message.toLowerCase().includes('denied') ? 'error' : '';
+
+            if (messageTimeoutId) clearTimeout(messageTimeoutId);
+            if (duration > 0) {
+                messageTimeoutId = setTimeout(hideMessage, duration);
+            }
+        }
+
+        /** Hides the message box. */
+        function hideMessage() {
+             if (!messageBox) return;
+             if (messageTimeoutId) clearTimeout(messageTimeoutId);
+             messageBox.style.display = 'none';
+             messageBox.className = ''; // Clear error class
+             messageTimeoutId = null;
+        }
+
+        // --- Local Storage Functions ---
+        /** Retrieves all stored entries. Returns empty object on failure. */
+        function getStoredEntries() {
+            if (!supportsLocalStorage) return {};
+            try {
+                const stored = localStorage.getItem(PIXEL_ENTRIES_KEY);
+                if (stored && stored.length > 2 && stored.startsWith('{') && stored.endsWith('}')) {
+                    const parsed = JSON.parse(stored);
+                    return (typeof parsed === 'object' && parsed !== null) ? parsed : {};
+                }
+                return {};
+            } catch (e) {
+                console.error("Error reading entries from localStorage:", e);
+                showMessage("Error loading past entries.", 4000, true); // Mark as error
+                return {};
+            }
+        }
+
+        /** Saves a new transcription entry. Returns entry object or null. */
+        function saveEntry(text) {
+            if (!supportsLocalStorage) {
+                showMessage("Cannot save: Browser storage not supported.", 4000, true);
+                return null;
+            }
+            const trimmedText = text.trim();
+            if (!trimmedText) {
+                console.log("Attempted to save empty entry. Skipping.");
+                return null;
+            }
+            try {
+                const allEntries = getStoredEntries();
+                const today = new Date().toISOString().split('T')[0];
+                const now = new Date();
+                const currentTime = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                const newEntry = {
+                    timestamp: now.getTime(),
+                    time: currentTime,
+                    text: trimmedText
+                };
+                if (!Array.isArray(allEntries[today])) {
+                    allEntries[today] = [];
+                }
+                allEntries[today].push(newEntry);
+                localStorage.setItem(PIXEL_ENTRIES_KEY, JSON.stringify(allEntries));
+                console.log("Entry saved successfully:", newEntry);
+                return newEntry;
+            } catch (e) {
+                console.error("Error saving entry to localStorage:", e);
+                if (e.name === 'QuotaExceededError' || e.message.includes('quota')) {
+                    showMessage("Storage full. Cannot save new entry.", 5000, true);
+                } else {
+                    showMessage("Error saving entry.", 5000, true);
+                }
+                return null;
+            }
+        }
+
+        // --- UI State Management ---
+        /** Updates UI for the recording state. */
+        function setRecordingState() {
+            if (isRecording) return;
+            console.log("Setting state to: Recording");
+            isRecording = true;
+            if(recordButton) recordButton.disabled = false; // Can stop
+            if(stopButton) stopButton.disabled = false; // Enable stop
+            if(historyButton) historyButton.disabled = true; // Disable history while recording
+            if(recordButton) recordButton.setAttribute('aria-label', 'Stop Recording');
+            if(statusDiv) statusDiv.textContent = 'Recording';
+            if(tapeRecorderDiv) tapeRecorderDiv.classList.add('recording'); // Trigger animation
+        }
+
+        /** Updates UI for the idle state. */
+        function setIdleState() {
+            // Check if already idle to prevent redundant operations
+            if (!isRecording && stopButton?.disabled) {
+                 console.log("Already in idle state or transitioning.");
+                 return;
+            }
+            console.log("Setting state to: Idle");
+            isRecording = false;
+            if(recordButton) recordButton.disabled = false; // Can record
+            if(stopButton) stopButton.disabled = true; // Disable stop
+            if(historyButton) historyButton.disabled = !supportsLocalStorage; // Re-enable history if supported
+            if(recordButton) recordButton.setAttribute('aria-label', 'Start Recording');
+            if(statusDiv) statusDiv.textContent = 'Stopped';
+            if(tapeRecorderDiv) tapeRecorderDiv.classList.remove('recording'); // Stop animation
+            // Clear persistent "Listening..." message
+            if (messageBox && messageBox.textContent === 'Listening...') { hideMessage(); }
+             console.log("State set to Idle complete.");
+        }
+
+        // --- Web Speech API Setup ---
+        /** Initializes the SpeechRecognition object. */
+        function initializeSpeechRecognition() {
+            console.log("Initializing Speech Recognition...");
+            if (!supportsSpeechRecognition) {
+                console.error("Speech Recognition not supported.");
+                showMessage("Voice input not supported.", 0, true);
+                if(recordButton) recordButton.disabled = true;
+                return;
+            }
+            try {
+                recognition = new SpeechRecognition();
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                recognition.lang = 'en-US';
+                recognition.maxAlternatives = 1;
+
+                recognition.onstart = () => { console.log('Speech recognition service started.'); };
+                recognition.onaudiostart = () => { console.log('Audio capture started.'); showMessage('Listening...', 0); };
+                recognition.onspeechstart = () => { console.log('Speech detected.'); };
+
+                recognition.onresult = (event) => {
+                    let interimTranscript = '';
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        const transcriptPart = event.results[i][0].transcript;
+                        if (event.results[i].isFinal) { currentFinalTranscript += transcriptPart.trim() + ' '; }
+                        else { interimTranscript += transcriptPart; }
+                    }
+                    if (transcriptArea) {
+                        transcriptArea.value = (currentFinalTranscript + interimTranscript).toUpperCase();
+                        transcriptArea.scrollTop = transcriptArea.scrollHeight;
+                    }
+                };
+                recognition.onend = () => {
+                    console.log('Speech recognition service ended.');
+                    if (!isRecording) { console.log("Recognition ended, but app already set to idle."); return; }
+                    const textToSave = currentFinalTranscript.trim();
+                    if (textToSave) { console.log("Final transcript captured:", textToSave); saveEntry(textToSave); }
+                    else { console.log("No final transcript captured."); }
+                    currentFinalTranscript = '';
+                    setIdleState(); // Transition back to idle
+                };
+                recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error, event.message);
+                    let userMessage = `ERROR: ${event.error}`;
+                    let shouldStopApp = true;
+                    switch (event.error) {
+                        case 'no-speech': userMessage = "NO SPEECH..."; shouldStopApp = false; break;
+                        case 'audio-capture': userMessage = 'MIC ERR!'; break;
+                        case 'not-allowed': userMessage = 'MIC DENIED!'; if (recordButton) recordButton.disabled = true; break;
+                        case 'network': userMessage = 'NETWORK ERR!'; break;
+                        case 'aborted': console.log("Recognition aborted."); userMessage = ''; shouldStopApp = false; break;
+                        case 'service-not-allowed': userMessage = 'SERVICE N/A!'; if (recordButton) recordButton.disabled = true; break;
+                        default: userMessage = `ERR: ${event.error}`;
+                    }
+                    if (userMessage) showMessage(userMessage, 5000, true); // Mark as error
+                    currentFinalTranscript = ''; // Reset accumulator on error
+                    if (shouldStopApp) { setIdleState(); }
+                };
+                 recognition.onspeechend = () => { console.log('Speech stopped being detected.'); };
+                 recognition.onaudioend = () => { console.log('Audio capture ended.'); if (messageBox?.textContent === 'Listening...') { hideMessage(); } };
+
+                if (recordButton) recordButton.disabled = false; // Enable button on successful init
+                console.log("Speech Recognition initialized successfully.");
+            } catch (e) {
+                console.error("Error creating SpeechRecognition instance:", e);
+                showMessage("Failed to init speech feature.", 0, true);
+                if (recordButton) recordButton.disabled = true;
+            }
+        }
+
+        // --- Action Functions ---
+        /** Starts a recording session. */
+        function startRecording() {
+            if (isRecording) { console.warn("Start called while already recording."); return; }
+            console.log("--- Start Recording Process ---");
+            if (!recognition) { console.error("Speech Recognition not initialized."); showMessage("Speech feature unavailable.", 5000, true); return; }
+
+            setRecordingState(); // Set UI state first
+
+            try {
+                currentFinalTranscript = ''; // Clear previous session data
+                if (transcriptArea) transcriptArea.value = ''; // Clear display area
+                console.log("Requesting recognition.start()...");
+                recognition.start();
+            } catch (error) {
+                console.error("Error calling recognition.start():", error);
+                if (error.name === 'InvalidStateError'){
+                    console.warn("InvalidStateError on start - likely already started.");
+                    // Ensure UI state is correct, might have been interrupted
+                    setRecordingState();
+                } else {
+                    showMessage("Could not start listening.", 5000, true);
+                    setIdleState(); // Revert to idle on failure
+                }
+            }
+        }
+        /** Stops a recording session. */
+        function stopRecording() {
+            if (!isRecording) { console.warn("Stop called while not recording."); return; }
+            console.log("--- Stop Recording Process ---");
+            if (messageBox?.textContent === 'Listening...') { hideMessage(); } // Hide listening message immediately
+
+            if (recognition) {
+                try {
+                    // Request stop. 'onend' handles state transition & saving.
+                    recognition.stop();
+                    console.log("Recognition stop requested.");
+                }
+                catch(e) {
+                    // If stop() itself throws an error, force cleanup immediately
+                    console.error("Error calling recognition.stop():", e);
+                    setIdleState();
+                }
+            } else {
+                // If recognition object is somehow missing, force cleanup
+                console.warn("Recognition object not found during stop request.");
+                setIdleState();
+            }
+        }
+
+        // --- History Modal Functions ---
+        /** Displays the history modal with all saved entries. */
+        function showHistoryModal() {
+            if (!historyModalOverlay || !historyModalBody) {
+                 console.error("History modal elements not found.");
+                 return;
+            }
+            try {
+                const allEntries = getStoredEntries();
+                // Sort dates chronologically (newest first)
+                const sortedDates = Object.keys(allEntries).sort((a, b) => new Date(b) - new Date(a));
+                historyModalBody.innerHTML = ''; // Clear previous content
+
+                if (sortedDates.length === 0) {
+                    // The CSS :empty::before pseudo-element handles the "No past entries" message.
+                     console.log("No history entries to display.");
+                } else {
+                    console.log(`Loading history for ${sortedDates.length} dates.`);
+                    sortedDates.forEach((date) => {
+                        const entriesForDate = Array.isArray(allEntries[date]) ? allEntries[date] : [];
+                        // Sort entries within the date by timestamp (oldest first within date)
+                        entriesForDate.sort((a, b) => a.timestamp - b.timestamp);
+
+                        // Format the date heading
+                        let displayDate = "Invalid Date";
+                        try {
+                            const dateParts = date.split('-');
+                            const entryDate = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
+                            if (!isNaN(entryDate.getTime())) {
+                                displayDate = entryDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+                            }
+                        } catch (e) { console.warn("Error parsing date in history:", date, e); }
+
+                        const dateHeading = document.createElement('h3');
+                        dateHeading.className = 'history-entry-date';
+                        dateHeading.textContent = displayDate;
+                        historyModalBody.appendChild(dateHeading);
+
+                        // Display entries for this date
+                        entriesForDate.forEach((entry) => {
+                            // Basic validation of entry structure
+                            if (entry && typeof entry.time === 'string' && typeof entry.text === 'string' && typeof entry.timestamp === 'number') {
+                                const itemDiv = document.createElement('div');
+                                itemDiv.className = 'history-entry-item';
+                                const timeSpan = document.createElement('span');
+                                timeSpan.className = 'history-entry-time';
+                                timeSpan.textContent = `[${entry.time}]`;
+                                const textSpan = document.createElement('span');
+                                textSpan.className = 'history-entry-text';
+                                textSpan.textContent = entry.text; // Display normal case in history
+                                itemDiv.appendChild(timeSpan);
+                                itemDiv.appendChild(textSpan);
+                                historyModalBody.appendChild(itemDiv);
+                            } else {
+                                console.warn("Skipping invalid history entry structure:", entry);
+                            }
+                        });
+                    });
+                }
+                // Make the modal visible
+                historyModalOverlay.classList.add('visible');
+            } catch (e) {
+                console.error("Error showing history modal:", e);
+                showMessage("Failed to load history.", 4000, true);
+            }
+        }
+        /** Hides the history modal. */
+        function hideHistoryModal() {
+            if (historyModalOverlay) historyModalOverlay.classList.remove('visible');
+        }
+
+        // --- Global Event Listeners ---
+        function handleRecordButtonClick() {
+            if (recordButton?.disabled) return;
+            if (isRecording) { stopRecording(); }
+            else { startRecording(); }
+        }
+        function handleHistoryButtonClick() {
+            if (historyButton?.disabled) return;
+            showHistoryModal();
+        }
+        function handleModalCloseClick() { hideHistoryModal(); }
+        function handleOverlayClick(event) { if (event.target === historyModalOverlay) { hideHistoryModal(); } }
+        function handleEscapeKey(event) { if (event.key === 'Escape' && historyModalOverlay?.classList.contains('visible')) { hideHistoryModal(); } }
+        function handlePageUnload() {
+            console.log("Page unloading. Cleaning up...");
+            if (recognition && isRecording) {
+                 try { recognition.abort(); } catch(e){} // Abort immediately, ignore errors
+                 console.log("Recognition aborted on page unload.");
+            }
+            isRecording = false; // Force state
+        }
+
+        // --- Theme Switching Logic ---
+        function applyTheme(themeClass) {
+            if (!body || !themeButtons) return; // Guard check
+            body.className = ''; // Clear all classes first
+            body.classList.add(themeClass); // Add the new theme class
+            themeButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.theme === themeClass);
+            });
+            // Use try-catch for localStorage access
+            try {
+                localStorage.setItem(currentThemeKey, themeClass);
+            } catch (e) {
+                console.warn("Could not save theme preference to localStorage:", e);
+            }
+            console.log("Applied theme:", themeClass);
+        }
+
+        // --- Background Grid Creation ---
+        function createGrid() {
+            if (!gridContainer) return; // Guard check
+            gridContainer.innerHTML = ''; // Clear existing grid
+            const getCssVariable = (variable) => getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
+            let squareSize = parseInt(getCssVariable('--grid-square-size'));
+            if (!squareSize || squareSize <= 0) squareSize = 30; // Fallback size
+
+            const cols = Math.ceil(window.innerWidth / squareSize);
+            const rows = Math.ceil(window.innerHeight / squareSize);
+            const totalSquares = cols * rows;
+
+            // Use DocumentFragment for performance when adding many elements
+            const fragment = document.createDocumentFragment();
+            for (let i = 0; i < totalSquares; i++) {
+                const square = document.createElement('div');
+                square.classList.add('grid-square');
+                // Set random animation delay based on the animation duration (20s)
+                square.style.animationDelay = `${Math.random() * 19.9}s`; // Slightly less than 20s
+                fragment.appendChild(square);
+            }
+            gridContainer.appendChild(fragment); // Append all squares at once
+        }
+
+        // --- Initial Setup ---
+        function initializeApp() {
+            console.log("--- DOMContentLoaded: Initializing App ---");
+             // Check for essential elements
+             const essentialElements = [recordButton, stopButton, transcriptArea, statusDiv, tapeRecorderDiv, messageBox, historyButton, historyModalOverlay, modalCloseBtn, gridContainer, body];
+             if (essentialElements.some(el => !el)) {
+                 console.error("CRITICAL ERROR: Core UI elements missing. Halting initialization.");
+                 // Use alert as a last resort if messageBox might be missing
+                 alert("Application failed to load correctly. Essential elements are missing.");
+                 return;
+             }
+
+            // Initial UI State
+            recordButton.disabled = true;
+            stopButton.disabled = true;
+            historyButton.disabled = true;
+
+            // Feature Support Checks & Messages
+            let featureMessages = [];
+            if (!supportsLocalStorage) { featureMessages.push("Saving/Loading"); historyButton.disabled = true; }
+            if (!supportsSpeechRecognition) { featureMessages.push("Speech Recognition"); recordButton.disabled = true; }
+            if (featureMessages.length > 0) { showMessage(`Warning: Unsupported features: ${featureMessages.join(', ')}.`, 8000); }
+
+            // Initialize Components
+            createGrid(); // Create background grid first
+            const currentThemeKey = 'pixelRecorderTheme'; // Define key here
+            const savedTheme = localStorage.getItem(currentThemeKey) || 'theme-pastel'; // Default theme
+            applyTheme(savedTheme); // Apply theme
+
+            // Initialize Speech Recognition if supported
+            if (supportsSpeechRecognition) {
+                initializeSpeechRecognition(); // This enables recordButton if successful
+            } else {
+                 recordButton.disabled = true; // Ensure it remains disabled
+                 if(statusDiv) statusDiv.textContent = 'Unsupported';
+            }
+
+            // Enable history button only if storage is supported
+            if (supportsLocalStorage) {
+                historyButton.disabled = false;
+            }
+
+            // Attach Event Listeners
+            recordButton.addEventListener('click', handleRecordButtonClick);
+            stopButton.addEventListener('click', stopRecording);
+            historyButton.addEventListener('click', handleHistoryButtonClick);
+            modalCloseBtn.addEventListener('click', handleModalCloseClick);
+            historyModalOverlay.addEventListener('click', handleOverlayClick);
+            document.addEventListener('keydown', handleEscapeKey);
+            window.addEventListener('beforeunload', handlePageUnload);
+
+            // Theme button listeners
+            themeButtons.forEach(button => {
+                 button.addEventListener('click', () => {
+                     applyTheme(button.dataset.theme);
+                 });
+             });
+
+            // Debounced resize handler for grid recreation
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(createGrid, 250); // Recreate grid 250ms after resize stops
+            });
+
+             // Initialize dataset property for transcript area
+             if (transcriptArea) transcriptArea.dataset.finalTranscript = '';
+
+            console.log("--- Pixel Recorder Initialized Successfully ---");
+        }
+
+        // --- Start Application ---
+        // Ensure DOM is fully loaded before running initialization
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            // DOMContentLoaded has already fired
+            initializeApp();
+        }
+
+    </script>
+</body>
+</html>
